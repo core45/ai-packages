@@ -61,12 +61,44 @@ translation jobs.
 ## Wiring into a host resource
 
 Three call sites, copy-pasteable into a fresh host's own `PostResource`.
-`AiPostsActions` and `AiCoreActions` cannot inject themselves into a
-host-owned resource — Filament resets `recordActions`/rebuilds the table
-before the resource's own `table()` method runs — so the host must spread
-their factories in explicitly. See the docblocks on
+
+`AiPostsActions` and `AiCoreActions` cannot inject themselves into a host-owned
+resource. The host must spread their factories in explicitly. This is the one
+piece of manual wiring the package cannot remove, so it is worth knowing why
+before you try to automate it away.
+
+### Why the package cannot inject these for you
+
+`Table::configureUsing()` exists, and so does `pushToolbarActions()`. Combining
+them is the obvious fix, it appears to work, and it is **silently discarded** on
+any table whose resource later calls `toolbarActions()` or `columns()` — which
+is the common case. Nothing errors; the actions are simply not there.
+
+The ordering, read out of Filament's own source:
+
+1. `Table::make()` calls `$static->configure()` (`filament/tables/src/Table.php:78`).
+   Every `configureUsing` callback fires there — **first**.
+2. The host's table is applied much later, via
+   `ListRecords::makeTable()` → `Resource::configureTable()` → your
+   `PostsTable::configure()`
+   (`filament/filament/src/Resources/Pages/ListRecords.php:213`).
+3. `toolbarActions()` **resets before it sets**
+   (`filament/tables/src/Table/Concerns/HasToolbarActions.php:39`): it assigns
+   `$this->toolbarActions = []` and only then pushes. `columns()` resets
+   identically (`HasColumns.php:41-50`).
+
+So the package pushes first and the host wipes it. `isImportant: true` does not
+help: both loops in `ComponentManager::configure()` sit *inside* `configure()`,
+so it only reorders within `Table::make()`.
+
+A resource that never calls `toolbarActions()` would keep the pushed actions —
+which is worse, not better. It would make the integration work or not work
+depending on how each host happened to write its table. An explicit spread is
+boring and always correct.
+
+See also the docblocks on
 `Core45\AiPosts\Filament\Actions\AiPostsActions` and
-`Core45\AiCore\Filament\Actions\AiCoreActions` for why.
+`Core45\AiCore\Filament\Actions\AiCoreActions`.
 
 ### 1. Table toolbar bulk actions
 

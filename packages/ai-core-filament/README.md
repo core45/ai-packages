@@ -75,6 +75,38 @@ is expected renders raw values. Be explicit:
 
 The resources in this package already do this.
 
+## Toolbar actions must be spread in by hand
+
+`AiCoreActions::forTableToolbar($modelKey)` returns an array for you to spread
+into your own table. It cannot inject itself, and the workaround that looks
+like it should work does not.
+
+`Table::configureUsing()` plus `pushToolbarActions()` is the obvious fix. It
+appears to work and is **silently discarded** on any table whose resource later
+calls `toolbarActions()` or `columns()` — the common case. Nothing errors; the
+actions are just absent.
+
+The ordering, read out of Filament's own source:
+
+1. `Table::make()` calls `$static->configure()`
+   (`filament/tables/src/Table.php:78`), which is where every `configureUsing`
+   callback fires — **first**.
+2. The host's table is applied much later, through
+   `ListRecords::makeTable()` → `Resource::configureTable()` → the host's own
+   `configure()` (`filament/filament/src/Resources/Pages/ListRecords.php:213`).
+3. `toolbarActions()` **resets before it sets**
+   (`filament/tables/src/Table/Concerns/HasToolbarActions.php:39`), and
+   `columns()` resets identically (`HasColumns.php:41-50`).
+
+The package pushes first, the host wipes it. `isImportant: true` does not help —
+both loops in `ComponentManager::configure()` sit *inside* `configure()`, so it
+only reorders within `Table::make()`.
+
+A resource that never calls `toolbarActions()` would keep the pushed actions,
+which is worse than failing outright: the integration would work or not work
+depending on how each host happened to write its table. The explicit spread is
+boring and always correct.
+
 ## Namespace
 
 `Core45\AiCore\Filament\` — the same namespace the classes had inside `ai-core`,
