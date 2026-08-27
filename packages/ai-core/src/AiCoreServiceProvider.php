@@ -192,10 +192,13 @@ class AiCoreServiceProvider extends ServiceProvider
         // once. See `StrSlugGenerator` for the full reasoning.
         $this->app->bindIf(GeneratesSlugs::class, StrSlugGenerator::class);
 
-        // `ChecksContentSimilarity` is reached only from
-        // `withSimilarityChecking()` — an explicit opt-in the host must call —
-        // so unlike the contracts above, an unbound install cannot be broken by
-        // it on the ordinary rewrite path. It gets a default anyway because,
+        // `ChecksContentSimilarity` is reached from `withSimilarityChecking()`,
+        // an explicit opt-in — and ALSO, contrary to what this comment said
+        // until the security review checked it, as a plain constructor
+        // dependency of `QualityGateService`, used unconditionally on every
+        // module of every pipeline run. The binding is therefore more
+        // necessary than "opt-in only" implied, not less. It gets a default
+        // because,
         // unlike `EnrichesCitations` or `StoresFocusKeyphrases`, this package
         // already ships a working implementation with no host-specific
         // dependency: `ContentSimilarityService` does same-type Jaccard
