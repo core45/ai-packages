@@ -43,7 +43,12 @@ set -euo pipefail
 
 ORG="core45"
 PACKAGES_DIR="packages"
-REMOTE_PREFIX="git@github.com:${ORG}"   # produces git@github.com:core45/<name>.git
+# SSH by default. Set SPLIT_REMOTE_PREFIX to push over https instead, e.g.
+#   SPLIT_REMOTE_PREFIX="https://github.com/core45" ./scripts/split-packages.sh
+# which is what a machine authenticated with `gh` but without a GitHub SSH key
+# needs — `ssh -T git@github.com` returning "Permission denied (publickey)" is
+# the fingerprint.
+REMOTE_PREFIX="${SPLIT_REMOTE_PREFIX:-git@github.com:${ORG}}"
 SPLIT_BRANCH_PREFIX="split"             # local branch used to hold each split, e.g. split/ai-posts
 
 DRY_RUN=0
