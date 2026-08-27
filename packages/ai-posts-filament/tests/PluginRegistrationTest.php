@@ -124,4 +124,33 @@ class PluginRegistrationTest extends TestCase
         config()->set('ai-posts.filament.post_resource', BlogProductSeriesResource::class);
         $this->assertSame(BlogProductSeriesResource::class, $resolve->invoke(null));
     }
+
+    /**
+     * Every page the resource routes to must exist and be the packaged copy.
+     *
+     * `every_packaged_view_resolves()` cannot cover these — they render standard
+     * Filament pages and reference no blade view of their own, so a stale
+     * `App\Filament\...` reference in `getPages()` would sail past it and only
+     * surface as a 500 when an operator clicked into the resource. The
+     * namespace assertion is the point: a resource can be registered, pass every
+     * other check here, and still route to classes that moved.
+     */
+    #[Test]
+    public function the_product_series_pages_exist_and_are_the_packaged_copies(): void
+    {
+        $pages = BlogProductSeriesResource::getPages();
+
+        $this->assertNotEmpty($pages);
+
+        foreach ($pages as $route => $registration) {
+            $class = $registration->getPage();
+
+            $this->assertTrue(class_exists($class), "{$class} (route {$route}) is missing.");
+            $this->assertStringStartsWith(
+                'Core45\\AiPosts\\Filament\\',
+                $class,
+                "{$class} still points outside the package.",
+            );
+        }
+    }
 }
