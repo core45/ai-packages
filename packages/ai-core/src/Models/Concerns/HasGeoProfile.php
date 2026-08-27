@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Models\Concerns;
 
+use Core45\AiCore\Enums\GeoGrade;
 use Core45\AiCore\Models\GeoProfile;
+use Core45\AiCore\Services\Geo\GeoScorerService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -14,10 +16,12 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * Models using this trait must implement geoProfileData() to provide
  * the content fields used for scoring.
  *
- * NOTE: the scoring service itself (a host-namespaced GEO scorer service in
- * the reference implementation) is not part of this host application yet,
- * so no `scoreGeo()` write helper is provided here. Only read access to
- * profiles already stored via GeoProfile is exposed.
+ * D7: both halves live here. `scoreGeo()` is the WRITE side and delegates to
+ * {@see GeoScorerService}, which is now part of this package; the rest is read
+ * access to profiles already stored. An earlier revision of this docblock said
+ * no write helper was provided because the scorer was still host-owned — that
+ * is no longer true, and leaving it would have described the opposite of the
+ * code below.
  */
 trait HasGeoProfile
 {
@@ -58,9 +62,22 @@ trait HasGeoProfile
     /**
      * Get the GEO grade for a specific locale.
      */
-    public function getGeoGrade(?string $locale = null): ?string
+    public function getGeoGrade(?string $locale = null): ?GeoGrade
     {
         return $this->geoProfile($locale)?->grade;
+    }
+
+    /**
+     * Re-score GEO for this model and upsert the profile.
+     *
+     * Resolved from the container rather than instantiated, so a consuming app
+     * can bind its own scorer without touching every model that uses the trait.
+     */
+    public function scoreGeo(?string $locale = null): GeoProfile
+    {
+        $locale = $locale ?? app()->getLocale();
+
+        return app(GeoScorerService::class)->score($this, $locale);
     }
 
     /**

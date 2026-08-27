@@ -1,37 +1,29 @@
 {{--
-    NOTE: in the source application `GeoProfile::$grade` was a host-owned
-    `GeoGrade` backed enum with `color()`/`label()` helpers. The host enums
-    directory is out of scope for this port, so the host `GeoProfile` model
-    stores `grade` as a plain string ('A'..'F') and the color/label mapping
-    below is done inline instead.
+    D7: `GeoProfile::$grade` is a `Core45\AiCore\Enums\GeoGrade` again, so the
+    colour and the label come from the enum's own `color()` / `label()` helpers
+    rather than from the two inline maps that stood in for them while the grade
+    was a plain string. Those maps are deliberately gone: duplicating a mapping
+    the enum already owns is how the two drift, and they already had — the enum
+    reads 'Needs Work' and 'Critical' where these said 'Fair' and 'Failing'.
+
+    Still nullable: a record that has never been scored has no profile at all,
+    so both reads go through `?->` and fall back to the same neutral badge the
+    string version showed.
 --}}
 @php
     $record = $getRecord();
     $locale = $getLocale() ?? app()->getLocale();
     $profile = $record?->geoProfile($locale);
 
-    $gradeColor = match ($profile?->grade) {
-        'A' => 'success',
-        'B' => 'info',
-        'C' => 'warning',
-        'D', 'F' => 'danger',
-        default => 'gray',
-    };
-
-    $gradeLabels = [
-        'A' => __('Excellent'),
-        'B' => __('Good'),
-        'C' => __('Fair'),
-        'D' => __('Poor'),
-        'F' => __('Failing'),
-    ];
+    $grade = $profile?->grade;
+    $gradeColor = $grade?->color() ?? 'gray';
 @endphp
 
 <div class="space-y-4">
     @if($profile)
         <div class="flex items-center gap-3">
             <x-filament::badge :color="$gradeColor" size="lg">
-                {{ $profile->grade }} - {{ $gradeLabels[$profile->grade] ?? $profile->grade }}
+                {{ $grade?->value }} - {{ $grade?->label() }}
             </x-filament::badge>
             <span class="text-lg font-bold">{{ $profile->score }}/100</span>
         </div>

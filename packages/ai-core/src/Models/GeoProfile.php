@@ -4,23 +4,27 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Models;
 
+use Core45\AiCore\Enums\GeoGrade;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 
 /**
- * NOTE: `grade` is a plain string ('A'..'F') here, not a host-namespaced
- * backed enum, because the host's enum directory is out of scope for this
- * change and no package in this application currently depends on that enum
- * existing.
+ * D7: `grade` casts to {@see GeoGrade}, a package-owned backed enum.
+ *
+ * It was a plain string here only because the grade enum had not been ported
+ * yet — the source application always stored a `GeoGrade`. `GeoScorerService`
+ * writes the enum, so the cast is what makes that write round-trip rather than
+ * fail; the column is still `string(2)` and the stored values ('A'..'F') are
+ * byte-identical to what the un-cast version wrote.
  *
  * @property int $id
  * @property string $model_type
  * @property int $model_id
  * @property string $locale
  * @property int $score
- * @property string $grade
+ * @property GeoGrade $grade
  * @property array<string, mixed>|null $audit
  * @property Carbon|null $citations_enriched_at
  * @property Carbon $created_at
@@ -46,6 +50,7 @@ class GeoProfile extends Model
     {
         return [
             'score' => 'integer',
+            'grade' => GeoGrade::class,
             'audit' => 'array',
             'citations_enriched_at' => 'datetime',
         ];

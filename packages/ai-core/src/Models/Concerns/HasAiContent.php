@@ -32,6 +32,17 @@ trait HasAiContent
     // does `new static`, which re-enters `bootIfNotBooted()` on the model that
     // is *currently* booting and throws a LogicException. The host's former
     // `#[ObservedBy]` attribute avoided this because Laravel resolves it
-    // outside the boot window. AiCoreServiceProvider::boot() now registers the
-    // observer for every model in the ModelRegistry instead.
+    // outside the boot window.
+    //
+    // `AiCoreServiceProvider::registerAiDetectionObserver()`, called from that
+    // provider's `boot()`, attaches it instead — to every model in
+    // `config('ai.models')` that both extends Model and uses `HasAiDetection`,
+    // and only when `ai.assistant.ai_detection.enabled` is on.
+    //
+    // That sentence was here before the code was. Nothing in the provider
+    // called `observe()`, so the packaged observer was dead in every install;
+    // the reference host did not notice because its own models carry
+    // `#[ObservedBy(App\Observers\AiDetectionObserver::class)]` and ran a host
+    // copy of it. If this comment and the provider ever disagree again, the
+    // provider is the one telling the truth.
 }

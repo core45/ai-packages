@@ -38,6 +38,11 @@ class AiCoreActions
      * wrong place. The actions themselves were always generic; only the name and
      * the key were not.
      *
+     * D7 added `ScoreGeoAction` here. A host that still wires its own inline
+     * `scoreGeo` bulk action will see TWO until it removes that copy — the
+     * duplicate is the visible signal that the migration is half done, not a
+     * bug in this factory.
+     *
      * @param  string  $modelKey  a key registered in `config('ai.models')` naming
      *                            the records the table lists — 'post',
      *                            'product', 'webinar', or the consuming app's own
@@ -47,6 +52,7 @@ class AiCoreActions
     {
         return [
             RunSimilarityAuditAction::makeBulkAction($modelKey),
+            ScoreGeoAction::makeBulkAction($modelKey),
             CheckAiDetectionAction::makeBulkAction(),
         ];
     }

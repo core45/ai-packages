@@ -7,12 +7,15 @@ namespace Core45\AiCore;
 use Core45\AiCore\Contracts\AiClient;
 use Core45\AiCore\Contracts\GeneratesImages;
 use Core45\AiCore\Contracts\NotifiesOperator;
+use Core45\AiCore\Models\Concerns\HasAiDetection;
+use Core45\AiCore\Observers\AiDetectionObserver;
 use Core45\AiCore\Services\AiClientFactory;
 use Core45\AiCore\Services\ImageGeneration\FalAiService;
 use Core45\AiCore\Services\ImageGeneration\GeminiImageService;
 use Core45\AiCore\Services\RemoteAiClient;
 use Core45\AiCore\Support\Notifications\LoggingOperatorNotifier;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
 
@@ -47,6 +50,20 @@ class AiCoreServiceProvider extends ServiceProvider
         // (if present) overrides these values key-by-key; env var names are
         // stable across the extraction.
         $this->mergeConfigFrom(__DIR__.'/../config/ai.php', 'ai');
+
+        // D7: the GEO scorer reads `geo.site_name` and three `geo.scoring.*`
+        // thresholds with no inline fallback, so the package has to supply them
+        // or a fresh install scores differently to an existing one — see
+        // config/geo.php for what each unset key actually does.
+        //
+        // `mergeConfigFrom` is NOT recursive — `Illuminate\Support\ServiceProvider`
+        // does a plain `array_merge(require $path, $config->get($key, []))`. A
+        // consuming app's top-level keys win, and its `models` list is untouched,
+        // but an app that defines `geo.scoring` with ONE key replaces this whole
+        // nested array and the siblings come back null. That is why every
+        // `geo.*` read in GeoScorerService also carries an inline default; the
+        // merge alone is not enough, and the failure is silent.
+        $this->mergeConfigFrom(__DIR__.'/../config/geo.php', 'geo');
 
         // Phase 12 (CUT-06/07 final): the `local` rollback is retired. The default
         // AiClient always resolves RemoteAiClient; no per-surface local adapter remains.
@@ -124,12 +141,15 @@ class AiCoreServiceProvider extends ServiceProvider
         // and an app on a different UI can reuse them.
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'ai-core');
 
+        $this->registerAiDetectionObserver();
+
         if ($this->app->runningInConsole()) {
             // D6/D11: `mergeConfigFrom` above already supplies working defaults,
             // so publishing is only for apps that want to edit the file. This
             // app has its own `config/ai.php` and does NOT publish.
             $this->publishes([
                 __DIR__.'/../config/ai.php' => config_path('ai.php'),
+                __DIR__.'/../config/geo.php' => config_path('geo.php'),
             ], 'ai-core-config');
 
             // For apps that prefer migrations in their own tree. Publishing is
@@ -137,6 +157,58 @@ class AiCoreServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../database/migrations' => database_path('migrations'),
             ], 'ai-core-migrations');
+        }
+    }
+
+    /**
+     * Attach `AiDetectionObserver` to every registered model that can use it.
+     *
+     * `HasAiContent`'s docblock has claimed this happens since the extraction,
+     * and it did not: nothing in this provider called `observe()`, so the
+     * packaged observer was dead code in every application. The reference host
+     * did not notice because its own models carry
+     * `#[ObservedBy(App\Observers\AiDetectionObserver::class)]` and run a host
+     * copy — a drop-in install got the comment without the behaviour.
+     *
+     * Why it belongs here and not on the model: `Model::observe()` does
+     * `new static`, which re-enters `bootIfNotBooted()` on a model that is
+     * currently booting and throws a LogicException. A provider's `boot()` runs
+     * outside any model's boot window, so the call is safe here. The host's
+     * `#[ObservedBy]` attribute sidesteps the same problem differently, by
+     * having Laravel resolve it outside that window.
+     *
+     * The whole thing is behind the same config flag the observer checks first,
+     * which is what keeps it free: the flag defaults to false, so an app that
+     * has not opted in never autoloads a single registered model class here.
+     * Without that guard, `class_exists()` on every entry in `ai.models` would
+     * autoload and boot all of them on every request.
+     */
+    private function registerAiDetectionObserver(): void
+    {
+        if (!(bool) config('ai.assistant.ai_detection.enabled', false)) {
+            return;
+        }
+
+        /** @var array<string, class-string<Model>|mixed> $models */
+        $models = config('ai.models', []);
+
+        foreach ($models as $class) {
+            if (!is_string($class) || !class_exists($class)) {
+                continue;
+            }
+
+            if (!is_subclass_of($class, Model::class)) {
+                continue;
+            }
+
+            // Registering the observer on a model without the trait would be
+            // harmless — the observer re-checks — but skipping keeps the
+            // dispatcher free of listeners that can only ever return early.
+            if (!in_array(HasAiDetection::class, class_uses_recursive($class), true)) {
+                continue;
+            }
+
+            $class::observe(AiDetectionObserver::class);
         }
     }
 }
