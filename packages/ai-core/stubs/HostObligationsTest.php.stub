@@ -1,0 +1,211 @@
+<?php
+
+declare(strict_types=1);
+
+use Core45\AiCore\ModelRegistry;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Schema;
+
+/*
+|--------------------------------------------------------------------------
+| COPY THIS INTO YOUR APPLICATION
+|--------------------------------------------------------------------------
+|
+| Ships as a .stub so nothing autoloads or lints it inside the package. To use
+| it:
+|
+|     cp vendor/core45/ai-core/stubs/HostObligationsTest.php.stub \
+|        tests/Feature/HostObligationsTest.php
+|
+| Then run it. It needs nothing from the application it came from: every entry
+| below is keyed by a `config('ai.models')` REGISTRY KEY, not by a class name,
+| so it resolves whatever classes YOU registered and asserts they provide what
+| the packages actually reach for.
+|
+| Why it is worth the two minutes. The packages type these parameters as
+| `Model`, never as your concrete class, so the relations, scopes and columns
+| listed here are duck-typed and nothing in the type system checks them. A
+| missing one is a PHP `Error` at runtime — which the `catch (\Exception ...)`
+| blocks around several of those call sites do NOT catch. This file turns each
+| of them into a failing test instead of a failing request.
+|
+| It cannot live inside the package: only the application knows which classes
+| are registered.
+|
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Host obligations the interfaces do not capture
+|--------------------------------------------------------------------------
+|
+| §6.7 and §7: replacing a concrete host model with `Model` satisfies the
+| linter but proves nothing about the methods the package then calls on it.
+| Those calls are duck-typed. §7's instruction is explicit — "either declare
+| them on the contract or document them as host obligations, do not leave them
+| implicit" — and it names the exact defect this file exists to catch: a
+| `productCategory` relation the host model did not have, which threw as the
+| first statement of the admin "AI Rewrite Content" action while every other
+| gate passed.
+|
+| Since the model moves the package code now goes through
+| `ModelRegistry`, every such call is silenced by a `@phpstan-ignore` at its
+| site. A suppression is not a check. Without this test the package would carry
+| ~18 unguarded assumptions about a class it never names, each a runtime fatal
+| for the first host that does not satisfy it, and each INVISIBLE — the
+| suppression having removed the only warning there was.
+|
+| Rules for editing this file:
+|
+|  1. Adding an entry is how you record a new host obligation. Add it in the
+|     same commit as the `@phpstan-ignore` that needs it, and add the matching
+|     line to packages/ai-posts/README.md.
+|  2. Never delete an entry to make this pass. A failure means either the host
+|     lost a member the package needs, or the package started depending on
+|     something new. Both need a human.
+|  3. `method_exists()` is NOT sufficient on its own. It returns false for
+|     Eloquent scopes (`active()` is `scopeActive`) and for plain columns
+|     accessed as properties (`$post->author`). Checking only `method_exists`
+|     reports healthy members as missing — it did exactly that for both of
+|     those while this file was being written. Each kind is checked the way it
+|     actually resolves.
+*/
+
+/** Relations: must exist AND return a Relation to a real class. */
+dataset('host relations', [
+    'post.productCategory' => ['post', 'productCategory'],
+    'post.tags' => ['post', 'tags'],
+    'post.blogTopicCandidate' => ['post', 'blogTopicCandidate'],
+
+    // Wave 3f. SuggestsInternalLinks returns `Model` rather than the host's
+    // SeoIndexable, because a package interface cannot name a host class. That
+    // widening is what makes the seam work — and it also means PHPStan can no
+    // longer see this relation at the call site in EnrichPostLinksJob, so that
+    // line carries a @phpstan-ignore. This entry is what keeps the suppression
+    // honest.
+    'seo_indexable.indexable' => ['seo_indexable', 'indexable'],
+]);
+
+/** Instance methods the package calls on a registry-resolved model. */
+dataset('host methods', [
+    'post.translate' => ['post', 'translate'],
+    'post.translateOrNew' => ['post', 'translateOrNew'],
+    'post.getOrCreateSeoIndexable' => ['post', 'getOrCreateSeoIndexable'],
+    'post.getUrl' => ['post', 'getUrl'],
+    'category.translate' => ['category', 'translate'],
+    'category.getUrl' => ['category', 'getUrl'],
+]);
+
+/** Static calls, including query scopes, which method_exists cannot see. */
+dataset('host statics', [
+    'image_director_profile.defaultForModel' => ['image_director_profile', 'defaultForModel'],
+    'image_style.resolveBySlug' => ['image_style', 'resolveBySlug'],
+    'image_style.active' => ['image_style', 'active'],
+
+    // The translation-lock API. Every translate job in ai-posts, ai-products
+    // and ai-webinars calls these statics on the registry-resolved class, and
+    // Model declares none of them — so each call site carries a
+    // @phpstan-ignore. These four entries are what make those suppressions
+    // safe rather than silent.
+    'translation_lock.isCancelledByToken' => ['translation_lock', 'isCancelledByToken'],
+    'translation_lock.releaseByToken' => ['translation_lock', 'releaseByToken'],
+    'translation_lock.restoreSnapshot' => ['translation_lock', 'restoreSnapshot'],
+]);
+
+/** Columns read as properties. */
+dataset('host columns', [
+    'post.id' => ['post', 'id'],
+    'post.post_type_id' => ['post', 'post_type_id'],
+    'post.post_category_id' => ['post', 'post_category_id'],
+    'post.author' => ['post', 'author'],
+
+    // Read off the same widened-to-Model suggestion rows as
+    // seo_indexable.indexable above, to build anchor text.
+    'seo_indexable.title' => ['seo_indexable', 'title'],
+]);
+
+/**
+ * Attributes that are NOT columns: values the package reads as properties which
+ * the host derives through an accessor.
+ *
+ * This dataset exists because the column check above failed on
+ * `primary_keyphrase` when it was first added here. That was the test doing its
+ * job, not a bad entry: `$indexable->primary_keyphrase` resolves through
+ * `getPrimaryKeyphraseAttribute()`, which decodes the `keyphrases` JSON column.
+ * `Schema::hasColumn()` cannot see it, exactly as `method_exists()` cannot see
+ * a query scope. Same lesson as rule 3 in the header — check each member the
+ * way it actually resolves, or the gate reports healthy members as missing.
+ */
+dataset('host attributes', [
+    'seo_indexable.primary_keyphrase' => ['seo_indexable', 'primary_keyphrase'],
+]);
+
+function registeredModel(string $key): Model
+{
+    $class = app(ModelRegistry::class)->getModelClassOrFail($key);
+
+    expect(class_exists($class))->toBeTrue("config('ai.models.{$key}') names {$class}, which does not exist.");
+
+    return new $class;
+}
+
+it('provides every relation the packages reach for', function (string $key, string $relation): void {
+    $model = registeredModel($key);
+
+    expect(method_exists($model, $relation))->toBeTrue(
+        "The model registered as '{$key}' (".$model::class.") has no {$relation}() relation. ".
+        'Package code calls it behind a @phpstan-ignore, so nothing else will warn you.'
+    );
+
+    $result = $model->{$relation}();
+
+    expect($result)->toBeInstanceOf(Relation::class);
+    expect(class_exists($result->getRelated()::class))->toBeTrue();
+})->with('host relations');
+
+it('provides every instance method the packages call', function (string $key, string $method): void {
+    $model = registeredModel($key);
+
+    expect(method_exists($model, $method))->toBeTrue(
+        "The model registered as '{$key}' (".$model::class.") has no {$method}(). ".
+        'Package code calls it behind a @phpstan-ignore.'
+    );
+})->with('host methods');
+
+it('provides every static call and scope the packages use', function (string $key, string $method): void {
+    $class = app(ModelRegistry::class)->getModelClassOrFail($key);
+
+    // A query scope is not a real static method — Eloquent routes it through
+    // __callStatic to scope<Name>. Accept either spelling.
+    $resolves = method_exists($class, $method)
+        || method_exists($class, 'scope'.ucfirst($method));
+
+    expect($resolves)->toBeTrue(
+        "The model registered as '{$key}' ({$class}) provides neither {$method}() nor scope".ucfirst($method).'(). '.
+        'Package code calls it statically behind a @phpstan-ignore.'
+    );
+})->with('host statics');
+
+it('provides every column the packages read', function (string $key, string $column): void {
+    $model = registeredModel($key);
+
+    expect(Schema::hasColumn($model->getTable(), $column))->toBeTrue(
+        "The model registered as '{$key}' (".$model::class.") has no {$column} column on {$model->getTable()}."
+    );
+})->with('host columns');
+
+it('provides every derived attribute the packages read', function (string $key, string $attribute): void {
+    $model = registeredModel($key);
+
+    // Either resolution path is fine — what matters is that reading the
+    // property yields the host's value. A column that later becomes an
+    // accessor (or the reverse) must not fail this.
+    $accessor = 'get'.str_replace(' ', '', ucwords(str_replace('_', ' ', $attribute))).'Attribute';
+
+    expect(method_exists($model, $accessor) || Schema::hasColumn($model->getTable(), $attribute))->toBeTrue(
+        "The model registered as '{$key}' (".$model::class.") exposes {$attribute} neither as a column ".
+        "on {$model->getTable()} nor through {$accessor}(). Package code reads it as a plain property, ".
+        'so nothing else will warn you.'
+    );
+})->with('host attributes');
