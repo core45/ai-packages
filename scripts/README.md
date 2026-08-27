@@ -1,5 +1,44 @@
 # scripts/
 
+## check-file-inventory.php
+
+The inventory gate (plan §A.6). Diffs the tracked file set under `packages/`
+against `scripts/file-inventory.json` and fails on drift.
+
+It exists because every other check in CI asks whether what is present is
+correct, and none of them asks whether something stopped being present. That is
+the failure this project actually had: 52 pipeline files went missing behind a
+test suite that stayed green, because a suite can only exercise what remains.
+
+```bash
+php scripts/check-file-inventory.php            # check — this is what CI runs
+php scripts/check-file-inventory.php --update   # rewrite the manifest
+php scripts/check-file-inventory.php --list     # print per-directory counts
+```
+
+### The two ways it fails, and what to do
+
+**A file was removed.** Either the removal was a mistake — revert it — or it was
+intended, in which case add the path to `scripts/file-inventory-allowlist.txt`
+with a reason after a `#`, then re-run with `--update`. A bare path with no
+reason is rejected: the gate exists so that a removal is a decision somebody
+recorded, and a bare path records nothing the deletion did not already say.
+
+**A file was added.** Run `--update` and commit the manifest alongside the
+change.
+
+Failing on additions looks like friction and is not. A manifest that only
+tracked deletions would go stale the moment anything was added, and a stale
+manifest cannot detect the *next* deletion — the gate would keep reporting
+success while measuring nothing.
+
+### Why `git ls-files` and not a directory walk
+
+A walk sees `vendor/` trees from the per-package suites, `.phpunit.cache`, and
+whatever else the last local run left behind, so its idea of the inventory
+depends on who ran what last. The tracked set is identical on every machine and
+in CI, and it is also the only set a reviewer can see in a diff.
+
 ## split-packages.sh
 
 Publishes each package under `packages/<name>` to its own read-only GitHub

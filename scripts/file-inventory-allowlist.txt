@@ -1,0 +1,13 @@
+# Reviewed removals for the inventory gate (plan §A.6).
+#
+# One path per line, followed by `#` and the reason the removal is intended.
+# The reason is required — the gate rejects a bare path, because a bare path
+# records nothing that deleting the file did not already say.
+#
+#   packages/ai-posts/src/Old/Thing.php  # merged into NewThing.php in <commit>
+#
+# Once a removal has been accepted and the manifest refreshed, the entry has
+# done its job and can be pruned. The gate lists prunable entries as a note.
+#
+# Empty by design: nothing has been removed from packages/ since the manifest
+# was first captured. An empty allowlist is the good state, not a missing file.

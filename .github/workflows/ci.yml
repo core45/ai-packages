@@ -97,6 +97,25 @@ jobs:
       - name: No migration collisions
         run: php scripts/check-migration-collisions.php
 
+      # Plan §A.6. Every other check in this file asks whether what is here is
+      # correct. None of them asks whether something stopped being here, and
+      # that is the failure this project actually had: 52 pipeline files went
+      # missing behind a suite that stayed green, because a suite can only test
+      # what remains.
+      #
+      # Not a historical worry either. The BlogProductSeries Filament tree sat
+      # unpackaged for two phases while its checklist item read as done — the
+      # models had moved, the UI had not, and nothing measured the gap.
+      #
+      # So this diffs the tracked file set under packages/ against a committed
+      # manifest. A removal must be allowlisted with a written reason; an
+      # addition must arrive with a refreshed manifest. Failing on additions is
+      # the part that looks like friction and is not: a manifest that lags
+      # cannot detect the next deletion, so it would keep reporting success
+      # while measuring nothing.
+      - name: File inventory
+        run: php scripts/check-file-inventory.php
+
       # D20: the five domain packages must install into an app with no Filament,
       # or one on a different panel. Filament lives only in the *-filament
       # packages. This is the gate that keeps that true — an `implements
