@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace Core45\AiCore;
 
 use Core45\AiCore\Contracts\AiClient;
+use Core45\AiCore\Contracts\GeneratesImages;
 use Core45\AiCore\Contracts\NotifiesOperator;
 use Core45\AiCore\Services\AiClientFactory;
+use Core45\AiCore\Services\ImageGeneration\FalAiService;
+use Core45\AiCore\Services\ImageGeneration\GeminiImageService;
 use Core45\AiCore\Services\RemoteAiClient;
 use Core45\AiCore\Support\Notifications\LoggingOperatorNotifier;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use InvalidArgumentException;
 
 /**
  * Binds `AiClient` unconditionally to `RemoteAiClient` — every AI surface is
@@ -70,6 +74,36 @@ class AiCoreServiceProvider extends ServiceProvider
         // so installing it upgrades delivery from the log to a real panel
         // notification without the app configuring anything.
         $this->app->bindIf(NotifiesOperator::class, LoggingOperatorNotifier::class);
+
+        // `GeneratesImages` had two implementations in this package and no
+        // binding for either, while `ai-posts-filament` resolves it in three
+        // places. `app(GeneratesImages::class)` on an interface with no binding
+        // throws "target is not instantiable" — so the AI photo action was a
+        // container error waiting for the first person to open it, in every
+        // application including this one.
+        //
+        // Which provider to use is a deployment choice, not a package one, so it
+        // comes from config. `bindIf` leaves an app that binds its own alone.
+        $this->app->bindIf(GeneratesImages::class, function (Application $app): GeneratesImages {
+            $provider = config('ai.image_provider', 'fal');
+
+            /** @var array<string, class-string<GeneratesImages>> $providers */
+            $providers = [
+                'fal' => FalAiService::class,
+                'gemini' => GeminiImageService::class,
+            ];
+
+            if (!isset($providers[$provider])) {
+                throw new InvalidArgumentException(sprintf(
+                    'Unknown ai.image_provider [%s]. Known providers: %s. Bind %s yourself to use another.',
+                    is_scalar($provider) ? (string) $provider : gettype($provider),
+                    implode(', ', array_keys($providers)),
+                    GeneratesImages::class,
+                ));
+            }
+
+            return $app->make($providers[$provider]);
+        });
     }
 
     public function boot(): void

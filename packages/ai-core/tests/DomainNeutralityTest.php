@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Tests;
 
+use Core45\AiCore\Contracts\GeneratesImages;
+use Core45\AiCore\Services\ImageGeneration\GeminiImageService;
 use Core45\AiCore\Services\UsageAnalyticsService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 
 class DomainNeutralityTest extends TestCase
@@ -63,6 +66,36 @@ class DomainNeutralityTest extends TestCase
         config()->set('ai.topic_patterns', []);
 
         $this->assertSame([], app(UsageAnalyticsService::class)->getTopicDistribution(1)->all());
+    }
+
+    /**
+     * `GeneratesImages` resolves without the host binding anything.
+     *
+     * ai-core shipped two implementations and a binding for neither, while
+     * ai-posts-filament resolves the contract in three places. Resolving an
+     * unbound interface throws "target is not instantiable", so the AI photo
+     * action was a container error waiting for the first person to open it.
+     */
+    #[Test]
+    public function the_image_generator_resolves_from_config(): void
+    {
+        config()->set('ai.image_provider', 'gemini');
+
+        $this->assertInstanceOf(GeminiImageService::class, app(GeneratesImages::class));
+    }
+
+    /**
+     * An unknown provider names itself and the ones that exist, instead of
+     * surfacing as an opaque container error further down.
+     */
+    #[Test]
+    public function an_unknown_image_provider_says_so(): void
+    {
+        config()->set('ai.image_provider', 'midjourney');
+
+        $this->expectException(InvalidArgumentException::class);
+
+        app(GeneratesImages::class);
     }
 
     /**

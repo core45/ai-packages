@@ -48,6 +48,11 @@ return [
     | your own `config/ai.php` (this app does) or via the env keys below;
     | left null, the package simply skips the dispatch.
     */
+    // Which image-generation provider `GeneratesImages` resolves to: 'fal'
+    // or 'gemini'. A deployment choice, not a package one. An app that wants
+    // a different provider binds the contract itself and this key is ignored.
+    'image_provider' => env('AI_IMAGE_PROVIDER', 'fal'),
+
     'finalize_job' => env('AI_FINALIZE_BATCH_JOB'),
 
     // Consumer-owned feedback analysis loop (admin assistant stack, A3/A13).
