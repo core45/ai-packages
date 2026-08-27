@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
+use RuntimeException;
 
 /**
  * Abstract base class for AI content rewrite services.
@@ -1914,7 +1915,7 @@ PROMPT;
         $max = (int) config('ai.assistant.circuit_breaker.max_ai_calls_per_job', 150);
 
         if ($this->aiCallCount > $max) {
-            throw new \RuntimeException("AI call budget exceeded: {$this->aiCallCount}/{$max} calls in a single job.");
+            throw new RuntimeException("AI call budget exceeded: {$this->aiCallCount}/{$max} calls in a single job.");
         }
     }
 
@@ -2025,10 +2026,48 @@ PROMPT;
 
     /**
      * Generate unique slug for a model.
+     *
+     * Throws rather than returning an empty slug, and that is the whole point
+     * of the method having a body at all.
+     *
+     * `StrSlugGenerator`, the package default bound when a host binds no
+     * `GeneratesSlugs`, is `Str::slug()`, which returns `''` for any title with
+     * no transliterable characters — every CJK and Thai title. Verified:
+     * `Str::slug('日本語のタイトル') === ''`. Cyrillic, Greek and Arabic
+     * transliterate fine, so this is invisible in most of Europe and total in
+     * Japan.
+     *
+     * Every caller writes this return value straight into a translation and
+     * saves it, so without this guard translating a post into `ja` overwrites
+     * the live slug — the public URL of published content — with an empty
+     * string, and the uniqueness loop then hands the second such record the
+     * slug `-1`. Nothing reports a problem, because an empty string is a
+     * perfectly good `string`.
+     *
+     * Before the default existed, `app(GeneratesSlugs::class)` threw
+     * `BindingResolutionException`, every call site caught it into
+     * `$results['errors']`, and NO write happened. Throwing here restores that
+     * exactly: loud, recorded, and non-destructive. A default that boots the
+     * app must not be paid for with the content it was installed to edit.
+     *
+     * @throws RuntimeException when the bound generator cannot slug this title
      */
     protected function generateUniqueSlug(string $baseName, int $excludeId, string $locale): string
     {
         $baseSlug = app(GeneratesSlugs::class)->make($baseName);
+
+        if (trim($baseSlug) === '') {
+            throw new RuntimeException(sprintf(
+                'The bound %s produced an empty slug for a [%s] title, so there is no slug to '
+                .'save. Writing it would replace an existing public URL with an empty string. '
+                .'Bind a %s implementation that transliterates this script — the package default '
+                .'is Str::slug(), which returns nothing for CJK and Thai.',
+                GeneratesSlugs::class,
+                $locale,
+                GeneratesSlugs::class,
+            ));
+        }
+
         $slug = $baseSlug;
         $counter = 1;
 
