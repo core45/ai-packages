@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\DTOs;
 
-
 final readonly class ImagePromptRequest
 {
     /**

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Services\Operations;
 
+use Core45\AiCore\DTOs\DetectionRequest;
 use Core45\AiCore\Jobs\AiOperations\PollAiDetectionJob;
 use Core45\AiCore\Models\AiDetection;
 use Core45\AiCore\Models\Concerns\HasAiDetection;
 use Core45\AiCore\Services\RemoteAiClient;
 use Core45\AiCore\Support\AiOperations\ClientReference;
-use Core45\AiCore\DTOs\DetectionRequest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;

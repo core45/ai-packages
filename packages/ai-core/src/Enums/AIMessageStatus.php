@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Enums;
 
-use Filament\Support\Contracts\HasLabel;
-
 /**
  * Status of an AI conversation message.
  *
@@ -15,7 +13,7 @@ use Filament\Support\Contracts\HasLabel;
  * - Complete: Response finished successfully
  * - Error: An error occurred during processing
  */
-enum AIMessageStatus: string implements HasLabel
+enum AIMessageStatus: string
 {
     case Pending = 'pending';
     case Streaming = 'streaming';

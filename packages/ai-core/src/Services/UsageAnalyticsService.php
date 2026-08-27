@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Services;
 
+use Carbon\Carbon;
 use Core45\AiCore\Models\AIConversation;
 use Core45\AiCore\Models\AIConversationMessage;
 use Core45\AiCore\Models\AIKnowledgeGap;
 use Core45\AiCore\Models\AILearnedKnowledge;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use stdClass;

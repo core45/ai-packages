@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Services\Operations;
 
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Core45\AiCore\Jobs\AiOperations\PollAiDetectionJob;
 use Core45\AiCore\Jobs\AiOperations\PollAiHumanizationJob;
 use Core45\AiCore\Models\AiDetection;
 use Core45\AiCore\Models\AiHumanization;
 use Core45\AiCore\Services\RemoteAiClient;
 use Core45\AiCore\Support\AiOperations\ClientReference;
-use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Throwable;

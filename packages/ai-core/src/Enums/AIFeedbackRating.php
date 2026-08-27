@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Enums;
 
-use Filament\Support\Contracts\HasLabel;
-
-enum AIFeedbackRating: string implements HasLabel
+enum AIFeedbackRating: string
 {
     case Positive = 'positive';
     case Negative = 'negative';

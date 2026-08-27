@@ -6,12 +6,11 @@ namespace Core45\AiCore\Models;
 
 use Core45\AiCore\Enums\AIImprovementStatus;
 use Core45\AiCore\Enums\AIImprovementType;
-use Core45\AiCore\Models\AILearnedKnowledge;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Foundation\Auth\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Carbon;
 use Laravel\Scout\Searchable;
 

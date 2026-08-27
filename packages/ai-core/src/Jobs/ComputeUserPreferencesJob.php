@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Jobs;
 
-use Illuminate\Foundation\Auth\User;
 use Core45\AiCore\Services\PreferenceInferenceService;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;

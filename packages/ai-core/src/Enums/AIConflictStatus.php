@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Enums;
 
-use Filament\Support\Contracts\HasLabel;
-
-enum AIConflictStatus: int implements HasLabel
+enum AIConflictStatus: int
 {
     case Detected = 0;
     case Reviewed = 1;

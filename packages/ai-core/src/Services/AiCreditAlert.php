@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core45\AiCore\Services;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Install-wide "the AI account is out of credits" signal, surfaced to staff as
@@ -81,6 +82,26 @@ class AiCreditAlert
         }
 
         session([self::SESSION_KEY => $recordedAt]);
+
+        // `alert()` is a global from `realrashid/sweet-alert`, which this
+        // package does not require — it is the consuming app's choice of
+        // notification UI, not the domain's. A global function is host coupling
+        // that no import-based check can see, so it survived every gate here and
+        // would have fataled with "call to undefined function" in any app
+        // without that package installed.
+        //
+        // Guarded rather than removed: where SweetAlert is present the operator
+        // still gets the blocking modal this class exists to raise. Where it is
+        // not, the condition is logged instead of taking down the request. The
+        // database notification described above is sent either way, so the
+        // signal is never lost outright.
+        if (!function_exists('alert')) {
+            Log::warning('AI credits exhausted; SweetAlert is not installed so no modal was raised.', [
+                'recorded_at' => $recordedAt,
+            ]);
+
+            return;
+        }
 
         alert()->html(
             __('You have run out of AI credits'),

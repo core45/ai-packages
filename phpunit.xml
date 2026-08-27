@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         failOnWarning="true"
+         failOnRisky="true">
+    <!--
+        One suite per package. CI runs `vendor/bin/pest` from the repository
+        root, which finds nothing without this file: each package keeps its own
+        Testbench harness under packages/*/tests, and there is no root tests/
+        directory for the runner to fall back on.
+
+        Suites are named per package so a single one can be run on its own by
+        passing its name to the runner while working on that package.
+    -->
+    <testsuites>
+        <testsuite name="ai-core">
+            <directory>packages/ai-core/tests</directory>
+        </testsuite>
+        <testsuite name="ai-core-filament">
+            <directory>packages/ai-core-filament/tests</directory>
+        </testsuite>
+        <testsuite name="ai-posts">
+            <directory>packages/ai-posts/tests</directory>
+        </testsuite>
+        <testsuite name="ai-chat">
+            <directory>packages/ai-chat/tests</directory>
+        </testsuite>
+        <testsuite name="ai-products">
+            <directory>packages/ai-products/tests</directory>
+        </testsuite>
+        <testsuite name="ai-webinars">
+            <directory>packages/ai-webinars/tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <directory>packages/ai-core/src</directory>
+            <directory>packages/ai-core-filament/src</directory>
+            <directory>packages/ai-posts/src</directory>
+            <directory>packages/ai-chat/src</directory>
+            <directory>packages/ai-products/src</directory>
+            <directory>packages/ai-webinars/src</directory>
+        </include>
+    </source>
+
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="DB_CONNECTION" value="testing"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+    </php>
+</phpunit>

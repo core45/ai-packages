@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Enums;
 
-use Filament\Support\Contracts\HasLabel;
-
-enum AIKnowledgeType: string implements HasLabel
+enum AIKnowledgeType: string
 {
     case Instruction = 'instruction';
     case Fact = 'fact';

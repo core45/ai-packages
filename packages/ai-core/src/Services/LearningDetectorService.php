@@ -6,8 +6,8 @@ namespace Core45\AiCore\Services;
 
 use Core45\AiCore\Models\AIConversation;
 use Core45\AiCore\Models\AILearnedKnowledge;
-use Illuminate\Foundation\Auth\User;
 use Core45\AiCore\Traits\LogsAIOperations;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Log;
 
 /**

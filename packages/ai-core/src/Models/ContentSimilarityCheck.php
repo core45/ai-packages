@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -24,8 +25,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property float $similarity_score
  * @property string $status
  * @property array<string, mixed>|null $details
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property-read Model $checkable
  */
 class ContentSimilarityCheck extends Model

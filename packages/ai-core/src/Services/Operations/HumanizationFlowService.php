@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Services\Operations;
 
+use Core45\AiCore\DTOs\HumanizationRequest;
 use Core45\AiCore\Jobs\AiOperations\PollAiHumanizationJob;
 use Core45\AiCore\Models\AiHumanization;
 use Core45\AiCore\Services\RemoteAiClient;
 use Core45\AiCore\Support\AiOperations\ClientReference;
-use Core45\AiCore\DTOs\HumanizationRequest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;

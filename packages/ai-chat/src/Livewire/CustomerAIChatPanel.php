@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Core45\AiChat\Livewire;
 
-use Core45\AiCore\Enums\AIMessageStatus;
-use Core45\AiCore\Models\AIConversation;
-use Core45\AiCore\Models\AIConversationMessage;
 use Core45\AiChat\Contracts\ChatProductCardContract;
 use Core45\AiChat\Services\CustomerAIService;
 use Core45\AiCore\Contracts\AiClient;
 use Core45\AiCore\DTOs\ChatRequest;
+use Core45\AiCore\Enums\AIMessageStatus;
 use Core45\AiCore\Enums\AiSurface;
 use Core45\AiCore\Exceptions\AiClientException;
 use Core45\AiCore\Exceptions\AiRateLimitedException;
+use Core45\AiCore\Models\AIConversation;
+use Core45\AiCore\Models\AIConversationMessage;
 use Core45\AiCore\Services\AiClientFactory;
 use Core45\AiCore\Services\RemoteAiClient;
 use Illuminate\Contracts\View\View;

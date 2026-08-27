@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Models;
 
-use Core45\AiCore\Enums\AIKnowledgeType;
 use Core45\AiCore\Database\Factories\AILearnedKnowledgeFactory;
+use Core45\AiCore\Enums\AIKnowledgeType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Carbon;
 use Laravel\Scout\Searchable;
-use Illuminate\Foundation\Auth\User;
 
 /**
  * AI Knowledge Base entry.
@@ -39,9 +39,9 @@ class AILearnedKnowledge extends Model
     use HasFactory;
 
     /** Package-local factory resolution (consumer apps have no factory for this model). */
-    protected static function newFactory(): \Core45\AiCore\Database\Factories\AILearnedKnowledgeFactory
+    protected static function newFactory(): AILearnedKnowledgeFactory
     {
-        return \Core45\AiCore\Database\Factories\AILearnedKnowledgeFactory::new();
+        return AILearnedKnowledgeFactory::new();
     }
 
     use Searchable;

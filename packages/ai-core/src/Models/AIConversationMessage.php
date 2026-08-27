@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Models;
 
+use Carbon\Carbon;
 use Core45\AiCore\Enums\AIFeedbackRating;
 use Core45\AiCore\Enums\AIMessageStatus;
 use Core45\AiCore\Observers\AIConversationMessageObserver;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

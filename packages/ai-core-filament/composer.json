@@ -1,0 +1,38 @@
+{
+    "name": "core45/ai-core-filament",
+    "description": "Filament UI for core45/ai-core: knowledge, knowledge gap/conflict and prompt-override resources, plus the Filament implementation of the operator notification seam.",
+    "type": "library",
+    "version": "0.1.0",
+    "license": "MIT",
+    "require": {
+        "php": "^8.4",
+        "core45/ai-core": "^0.1",
+        "filament/filament": "^5.7",
+        "laravel/framework": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Core45\\AiCore\\Filament\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Core45\\AiCore\\Filament\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Core45\\AiCore\\Filament\\AiCoreFilamentServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

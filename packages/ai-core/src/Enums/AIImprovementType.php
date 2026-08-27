@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Enums;
 
-use Filament\Support\Contracts\HasLabel;
-
-enum AIImprovementType: string implements HasLabel
+enum AIImprovementType: string
 {
     case Knowledge = 'knowledge';
     case Prompt = 'prompt';

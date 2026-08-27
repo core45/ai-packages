@@ -7,31 +7,40 @@
         "php": "^8.4"
     },
     "require-dev": {
+        "astrotomic/laravel-translatable": "^11.17",
         "filament/filament": "^5.7.6",
         "larastan/larastan": "^3.10.0",
         "laravel/framework": "^13.26.1",
         "laravel/pint": "^1.30.5",
+        "laravel/scout": "^10.25",
+        "league/commonmark": "^2.7",
+        "livewire/livewire": "^4.4",
         "mockery/mockery": "^1.6.15",
         "orchestra/testbench": "^11.0",
         "pestphp/pest": "^5.1.1",
-        "pestphp/pest-plugin-laravel": "^5.0.1"
+        "pestphp/pest-plugin-laravel": "^5.0.1",
+        "ramsey/uuid": "^4.7",
+        "spatie/laravel-medialibrary": "^11.23",
+        "stevebauman/purify": "^6.3"
     },
     "autoload": {
         "psr-4": {
+            "Core45\\AiChat\\": "packages/ai-chat/src/",
             "Core45\\AiCore\\": "packages/ai-core/src/",
             "Core45\\AiCore\\Database\\Factories\\": "packages/ai-core/database/factories/",
+            "Core45\\AiCore\\Filament\\": "packages/ai-core-filament/src/",
             "Core45\\AiPosts\\": "packages/ai-posts/src/",
             "Core45\\AiPosts\\Database\\Factories\\": "packages/ai-posts/database/factories/",
-            "Core45\\AiChat\\": "packages/ai-chat/src/",
             "Core45\\AiProducts\\": "packages/ai-products/src/",
             "Core45\\AiWebinars\\": "packages/ai-webinars/src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "Core45\\AiChat\\Tests\\": "packages/ai-chat/tests/",
+            "Core45\\AiCore\\Filament\\Tests\\": "packages/ai-core-filament/tests/",
             "Core45\\AiCore\\Tests\\": "packages/ai-core/tests/",
             "Core45\\AiPosts\\Tests\\": "packages/ai-posts/tests/",
-            "Core45\\AiChat\\Tests\\": "packages/ai-chat/tests/",
             "Core45\\AiProducts\\Tests\\": "packages/ai-products/tests/",
             "Core45\\AiWebinars\\Tests\\": "packages/ai-webinars/tests/"
         }

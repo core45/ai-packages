@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Enums;
 
-use Filament\Support\Contracts\HasLabel;
-
-enum AIConflictType: int implements HasLabel
+enum AIConflictType: int
 {
     case DirectContradiction = 0;
     case PartialOverlap = 1;

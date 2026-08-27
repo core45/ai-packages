@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Core45\AiCore\Services;
 
 use Core45\AiCore\Models\AIPromptOverride;
-use Core45\AiCore\Services\RemoteAiClient;
 use Illuminate\Support\Facades\Cache;
 
 /**

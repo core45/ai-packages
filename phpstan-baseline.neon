@@ -1,0 +1,799 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Offset ''questions'' on array\{topics\: array\<string\>, questions\: array\<string\>, summary\: string\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: packages/ai-chat/src/Console/Commands/SummarizeCustomerConversations.php
+
+		-
+			message: '#^Offset ''summary'' on array\{topics\: array\<string\>, questions\: array\<string\>, summary\: string\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: packages/ai-chat/src/Console/Commands/SummarizeCustomerConversations.php
+
+		-
+			message: '#^Offset ''topics'' on array\{topics\: array\<string\>, questions\: array\<string\>, summary\: string\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: packages/ai-chat/src/Console/Commands/SummarizeCustomerConversations.php
+
+		-
+			message: '#^Parameter \#1 \$time of static method Carbon\\Carbon\:\:parse\(\) expects Carbon\\Month\|Carbon\\WeekDay\|DateTimeInterface\|float\|int\|string\|null, array\|float\|int\<min, \-1\>\|int\<1, max\>\|string\|true given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/ai-chat/src/Console/Commands/SummarizeCustomerConversations.php
+
+		-
+			message: '#^Parameter \#2 \$period of method Core45\\AiChat\\Console\\Commands\\SummarizeCustomerConversations\:\:getDateRange\(\) expects string, array\|bool\|float\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/ai-chat/src/Console/Commands/SummarizeCustomerConversations.php
+
+		-
+			message: '#^Part \$period \(array\|bool\|float\|int\|string\|null\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: packages/ai-chat/src/Console/Commands/SummarizeCustomerConversations.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiCore\\Models\\AIConversation\:\:\$model_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-chat/src/Http/Controllers/ChatStreamProxyController.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiCore\\Models\\AIConversation\:\:\$model_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-chat/src/Http/Controllers/ChatStreamProxyController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/ai-chat/src/Livewire/CustomerAIChatPanel.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Foundation\\Auth\\User\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-chat/src/Services/CustomerAIService.php
+
+		-
+			message: '#^Return type \(array\{token\: string, expires\: int\}\) of method Core45\\AiChat\\Services\\GuestStreamTokenIssuer\:\:issue\(\) should be compatible with return type \(array\{token\: string, expires\: string\}\) of method Core45\\AiCore\\Contracts\\IssuesGuestStreamTokens\:\:issue\(\)$#'
+			identifier: method.childReturnType
+			count: 1
+			path: packages/ai-chat/src/Services/GuestStreamTokenIssuer.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Contracts\\AIContentable\:\:getAICapabilities\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/ai-core/src/Contracts/AIContentable.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Contracts\\AIContentable\:\:getAIContentFields\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/ai-core/src/Contracts/AIContentable.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Contracts\\AIContentable\:\:getAIContext\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/ai-core/src/Contracts/AIContentable.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Contracts\\AIQueryable\:\:getAIActions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/ai-core/src/Contracts/AIQueryable.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Contracts\\AIQueryable\:\:getAIFilterScopes\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/ai-core/src/Contracts/AIQueryable.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Contracts\\AIQueryable\:\:getAIQueryableFields\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/ai-core/src/Contracts/AIQueryable.php
+
+		-
+			message: '#^Method Core45\\AiCore\\ModelRegistry\:\:__construct\(\) has parameter \$urlSlugs with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/ai-core/src/ModelRegistry.php
+
+		-
+			message: '#^Method Core45\\AiCore\\ModelRegistry\:\:getContentableModels\(\) should return array\<string, class\-string\<Core45\\AiCore\\Contracts\\AIContentable&Illuminate\\Database\\Eloquent\\Model\>\> but returns array\<string, class\-string\<Illuminate\\Database\\Eloquent\\Model\>\>\.$#'
+			identifier: return.type
+			count: 1
+			path: packages/ai-core/src/ModelRegistry.php
+
+		-
+			message: '#^Method Core45\\AiCore\\ModelRegistry\:\:getQueryableModels\(\) should return array\<string, class\-string\<Core45\\AiCore\\Contracts\\AIQueryable&Illuminate\\Database\\Eloquent\\Model\>\> but returns array\<string, class\-string\<Illuminate\\Database\\Eloquent\\Model\>\>\.$#'
+			identifier: return.type
+			count: 1
+			path: packages/ai-core/src/ModelRegistry.php
+
+		-
+			message: '#^Class Core45\\AiCore\\Models\\AIConversation uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: packages/ai-core/src/Models/AIConversation.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Models\\AIConversation\:\:getLastMessageAttribute\(\) should return Core45\\AiCore\\Models\\AIConversationMessage\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: packages/ai-core/src/Models/AIConversation.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Models\\AIConversation\:\:messages\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: packages/ai-core/src/Models/AIConversation.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Models\\AIConversation\:\:model\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: packages/ai-core/src/Models/AIConversation.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Models\\AIConversation\:\:scopeActive\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packages/ai-core/src/Models/AIConversation.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Models\\AIConversation\:\:scopeActive\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packages/ai-core/src/Models/AIConversation.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Models\\AIConversation\:\:scopeForUser\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packages/ai-core/src/Models/AIConversation.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Models\\AIConversation\:\:scopeForUser\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packages/ai-core/src/Models/AIConversation.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Models\\AIConversation\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: packages/ai-core/src/Models/AIConversation.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$audience\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-core/src/Models/AIConversationMessage.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$locale\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-core/src/Models/AIConversationMessage.php
+
+		-
+			message: '#^Class Core45\\AiCore\\Models\\AIConversationMessage has PHPDoc tag @property for property \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/ai-core/src/Models/AIConversationMessage.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Models\\AIConversationMessage\:\:conversation\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: packages/ai-core/src/Models/AIConversationMessage.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Models\\AIConversationMessage\:\:scopeByRole\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packages/ai-core/src/Models/AIConversationMessage.php
+
+		-
+			message: '#^Method Core45\\AiCore\\Models\\AIConversationMessage\:\:scopeByRole\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packages/ai-core/src/Models/AIConversationMessage.php
+
+		-
+			message: '#^Trait Core45\\AiCore\\Models\\Concerns\\HasAiDetection is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: packages/ai-core/src/Models/Concerns/HasAiDetection.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Foundation\\Auth\\User\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/ai-core/src/Services/AIImprovementApplier.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-core/src/Services/AbstractContentRewriteService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$system_prompt\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-core/src/Services/AbstractContentRewriteService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getEffectiveFixedModules\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/ai-core/src/Services/AbstractContentRewriteService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getEffectiveForbiddenWords\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/ai-core/src/Services/AbstractContentRewriteService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getEffectiveFormality\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/ai-core/src/Services/AbstractContentRewriteService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getEffectiveMandatoryWords\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/ai-core/src/Services/AbstractContentRewriteService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getEffectivePersonas\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/ai-core/src/Services/AbstractContentRewriteService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getEffectiveStyleRules\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/ai-core/src/Services/AbstractContentRewriteService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getEffectiveTone\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: packages/ai-core/src/Services/AbstractContentRewriteService.php
+
+		-
+			message: '#^Argument of an invalid type list\<string\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: packages/ai-core/src/Services/MarkdownToHtmlConverter.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostPipelineRun\:\:\$primary_locale\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Jobs/BlogPipeline/AssemblePostJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Jobs/BlogPipeline/AssemblePostJob.php
+
+		-
+			message: '#^Parameter \#1 \$recipient of method Core45\\AiCore\\Contracts\\NotifiesOperator\:\:notifyOperator\(\) expects Illuminate\\Database\\Eloquent\\Model, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/AssemblePostJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostFeedback\:\:\$action_requested\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FeedbackAnalysisJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostFeedback\:\:\$comment\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FeedbackAnalysisJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostFeedback\:\:\$feedback_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FeedbackAnalysisJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostFeedback\:\:\$module_slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FeedbackAnalysisJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostFeedback\:\:\$rating\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FeedbackAnalysisJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostPipelineRun\:\:\$candidate_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FeedbackAnalysisJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogProfileLesson\:\:\$confidence\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FeedbackAnalysisJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogProfileLesson\:\:\$lesson_text\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FeedbackAnalysisJob.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,Core45\\AiPosts\\Models\\BlogPostFeedback\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FeedbackAnalysisJob.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,Core45\\AiPosts\\Models\\BlogPostFeedback\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FeedbackAnalysisJob.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:values\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FeedbackAnalysisJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostPipelineRun\:\:\$primary_locale\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FinalizePipelineRunJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostPipelineRun\:\:\$profile_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FinalizePipelineRunJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$approved_by\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FinalizePipelineRunJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FinalizePipelineRunJob.php
+
+		-
+			message: '#^Parameter \#1 \$recipient of method Core45\\AiCore\\Contracts\\NotifiesOperator\:\:notifyOperator\(\) expects Illuminate\\Database\\Eloquent\\Model, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/FinalizePipelineRunJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostPipelineRun\:\:\$candidate_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/ImproveModuleJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogProfileLesson\:\:\$confidence\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Jobs/BlogPipeline/PromoteToGlobalKnowledgeJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogProfileLesson\:\:\$effectiveness_score\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/PromoteToGlobalKnowledgeJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogProfileLesson\:\:\$lesson_text\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Jobs/BlogPipeline/PromoteToGlobalKnowledgeJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogProfileLesson\:\:\$times_applied\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Jobs/BlogPipeline/PromoteToGlobalKnowledgeJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostPipelineRun\:\:\$candidate_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/ResearchSynthesisJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$batch_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/ResearchSynthesisJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Jobs/BlogPipeline/ResearchSynthesisJob.php
+
+		-
+			message: '#^Parameter \#1 \$recipient of method Core45\\AiCore\\Contracts\\NotifiesOperator\:\:notifyOperator\(\) expects Illuminate\\Database\\Eloquent\\Model, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/ResearchSynthesisJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Jobs/BlogPipeline/StartPipelineJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogProfileLesson\:\:\$times_applied\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogPipeline/TrackLessonEffectivenessJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogTopics/CreateTopicFromUrlsJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$generate_faq\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogFaqJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogFaqJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$generate_images\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogImagesJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogImagesJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$generate_faq\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogPostJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$generate_images\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogPostJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$humanize_content\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogPostJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogPostJob.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Jobs/BlogTopics/PublishScheduledPostsJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Jobs/BlogTopics/ReEvaluateSeriesTopicsJob.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Core45\\AiPosts\\Models\\BlogTopicCandidate\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogTopics/ReEvaluateSeriesTopicsJob.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,Core45\\AiPosts\\Models\\BlogTopicCandidate\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: packages/ai-posts/src/Jobs/BlogTopics/ReEvaluateSeriesTopicsJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicProfile\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Jobs/BlogTopics/RefreshSiteProfileJob.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostPipelineRun\:\:\$primary_locale\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/InternalLinkContextBuilder.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostPipelineRun\:\:\$candidate_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/ModuleExecutor.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$batch_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/ModuleExecutor.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/ModuleExecutor.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostPipelineRun\:\:\$primary_locale\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Services/BlogPipeline/Modules/DynamicContentModule.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\ContentModule\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/Modules/DynamicContentModule.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\ContentModule\:\:\$system_prompt_template\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/Modules/DynamicContentModule.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\ContentModule\:\:\$user_prompt_template\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/Modules/DynamicContentModule.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostPipelineRun\:\:\$primary_locale\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/PipelineOrchestratorService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$generate_faq\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/PipelineOrchestratorService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$generate_images\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/PipelineOrchestratorService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$humanize_content\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/PipelineOrchestratorService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 4
+			path: packages/ai-posts/src/Services/BlogPipeline/PipelineOrchestratorService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicProfile\:\:\$primary_locale\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/PipelineOrchestratorService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\ContentModule\:\:\$system_prompt_template\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/PipelineOrchestratorService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\ContentModule\:\:\$user_prompt_template\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/PipelineOrchestratorService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicProfile\:\:\$profile_json\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Services/BlogPipeline/PromptTemplateResolver.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostPipelineRun\:\:\$candidate_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/QualityGateService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\ContentModule\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogPipeline/QualityGateService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$batch_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/BlogFaqWriterService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$generate_faq\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/BlogFaqWriterService.php
+
+		-
+			message: '#^Offset ''count'' on array\{enabled\: bool, count\: int\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/BlogFaqWriterService.php
+
+		-
+			message: '#^Offset ''enabled'' on array\{enabled\: bool, count\: int\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/BlogFaqWriterService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$batch_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/BlogImageGeneratorService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 3
+			path: packages/ai-posts/src/Services/BlogTopics/BlogImageGeneratorService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$batch_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/BlogPostWriterService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$intent\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/BlogPostWriterService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$rationale\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/BlogPostWriterService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/BlogPostWriterService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicProfile\:\:\$constraints\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/ResearchService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicProfile\:\:\$seed_keywords\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/SiteProfileService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicSource\:\:\$domain\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/TopicSynthesisService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicSource\:\:\$snippet\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/TopicSynthesisService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicSource\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/TopicSynthesisService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Core45\\AiPosts\\Models\\BlogTopicSource\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/TopicSynthesisService.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,Core45\\AiPosts\\Models\\BlogTopicSource\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/TopicSynthesisService.php
+
+		-
+			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicProfile\:\:\$seed_keywords\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/BlogTopics/UrlTopicService.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$negative_prompt\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/ImagePromptDirector.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$prompt_fragment\.$#'
+			identifier: property.notFound
+			count: 2
+			path: packages/ai-posts/src/Services/ImagePromptDirector.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$style_guidance\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/ImagePromptDirector.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$system_prompt\.$#'
+			identifier: property.notFound
+			count: 1
+			path: packages/ai-posts/src/Services/ImagePromptDirector.php
+
+		-
+			message: '#^Method Core45\\AiPosts\\Services\\ImagePromptDirector\:\:decorationParameters\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packages/ai-posts/src/Services/ImagePromptDirector.php

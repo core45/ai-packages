@@ -8,7 +8,6 @@
         "php": "^8.4",
         "laravel/framework": "^13.0",
         "astrotomic/laravel-translatable": "^11.17",
-        "filament/filament": "^5.7",
         "laravel/scout": "^10.25",
         "league/commonmark": "^2.7",
         "ramsey/uuid": "^4.7",
@@ -39,5 +38,8 @@
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "suggest": {
+        "core45/ai-core-filament": "Filament panel UI for the knowledge, conflict, gap and prompt-override resources, and database notifications instead of log-only ones."
+    }
 }

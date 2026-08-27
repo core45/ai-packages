@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Core45\AiChat\Console\Commands;
 
-use Core45\AiCore\Models\AIConversation;
-use Core45\AiCore\Models\AIConversationSummary;
 use Carbon\Carbon;
 use Core45\AiCore\Enums\AiSurface;
+use Core45\AiCore\Models\AIConversation;
+use Core45\AiCore\Models\AIConversationSummary;
 use Core45\AiCore\Services\AiClientFactory;
 use Core45\AiCore\Services\ContentSummarizerService;
 use Illuminate\Console\Command;

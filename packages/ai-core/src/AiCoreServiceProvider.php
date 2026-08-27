@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Core45\AiCore;
 
 use Core45\AiCore\Contracts\AiClient;
-use Core45\AiCore\Filament\AiCorePlugin;
+use Core45\AiCore\Contracts\NotifiesOperator;
 use Core45\AiCore\Services\AiClientFactory;
 use Core45\AiCore\Services\RemoteAiClient;
-use Filament\Panel;
+use Core45\AiCore\Support\Notifications\LoggingOperatorNotifier;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
@@ -60,46 +60,16 @@ class AiCoreServiceProvider extends ServiceProvider
             seoContentTypes: config('ai.seo_content_types', []),
         ));
 
-        $this->registerFilamentPlugin();
-    }
-
-    /**
-     * §9 step 7: the package registers its own Filament UI.
-     *
-     * Before this, a consuming app had to know to add `AiCorePlugin::make()` to
-     * its panel's `->plugins([...])` — an install step that is silent when
-     * skipped. The resources simply would not appear, with no error to explain
-     * why. Self-registration removes the step.
-     *
-     * `Panel::configureUsing()` must run in register(), not boot(): panels are
-     * themselves built by service providers, and a callback added in boot()
-     * arrives after the panel it was meant to configure.
-     *
-     * Which panels get the UI is the consuming app's decision, not the
-     * package's, so it is config rather than a hardcoded 'admin':
-     *
-     *   null (default) — every panel, which is what a single-panel app wants
-     *   ['admin']      — only the named panels
-     *   []             — none; the app registers the plugin by hand
-     *
-     * An empty array is honoured as "none" rather than treated as "unset". A
-     * consumer who explicitly opts out must not silently get the UI anyway.
-     */
-    private function registerFilamentPlugin(): void
-    {
-        if (!class_exists(Panel::class)) {
-            return;
-        }
-
-        Panel::configureUsing(function (Panel $panel): void {
-            $panels = config('ai.filament.panels');
-
-            if (is_array($panels) && !in_array($panel->getId(), $panels, true)) {
-                return;
-            }
-
-            $panel->plugin(AiCorePlugin::make());
-        });
+        // D22: the jobs report progress to the operator who started them. That
+        // used to be a direct `Filament\Notifications\Notification::make()`
+        // call in 13 places, which made a Filament panel a hard requirement of
+        // packages that have no UI of their own.
+        //
+        // `bindIf`, not `bind`: an app that has already chosen an implementation
+        // keeps it. `ai-core-filament` registers later and binds unconditionally,
+        // so installing it upgrades delivery from the log to a real panel
+        // notification without the app configuring anything.
+        $this->app->bindIf(NotifiesOperator::class, LoggingOperatorNotifier::class);
     }
 
     public function boot(): void

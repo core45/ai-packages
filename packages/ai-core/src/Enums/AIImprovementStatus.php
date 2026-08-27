@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Core45\AiCore\Enums;
 
-use Filament\Support\Contracts\HasLabel;
-
-enum AIImprovementStatus: string implements HasLabel
+enum AIImprovementStatus: string
 {
     case Pending = 'pending';
     case Approved = 'approved';
