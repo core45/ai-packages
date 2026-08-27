@@ -97,6 +97,53 @@ class HostCouplingTest extends TestCase
     }
 
     /**
+     * No component may hand an enum class straight to `->options()`.
+     *
+     * This is a silent failure, which is why it needs a ratchet rather than
+     * review. Filament does not throw when the enum lacks `HasLabel`: it falls
+     * back to `$case->name` (see filament/tables
+     * `Filters/Concerns/HasOptions.php`, the `is_a($enum, LabelInterface::class)`
+     * branch), so the filter renders `InProgress` instead of the translated
+     * label and every test still passes.
+     *
+     * The packaged enums deliberately do not implement `HasLabel` — that
+     * interface lives in `filament/support`, and the headless `ai-posts`
+     * package must not depend on it. So inside this package the class-string
+     * form is always wrong, and the explicit `cases()` map is the only correct
+     * shape. Two call sites had it, both carried over verbatim from the host,
+     * where the consumed enums still implement the interface.
+     */
+    #[Test]
+    public function no_component_passes_an_enum_class_to_options(): void
+    {
+        $offenders = [];
+
+        foreach ($this->phpFilesUnder(__DIR__.'/../src') as $file) {
+            $source = (string) file_get_contents($file->getPathname());
+            // Same strip as the string-literal gate above, and the same pattern
+            // deliberately: `//[^\n]*`, never `//.*$`. Under /s the dot matches
+            // newlines, so `//.*$` swallows everything from the first line
+            // comment to the end of the file — which silently blinded an earlier
+            // draft of this very test to the two call sites it was written for.
+            $source = (string) preg_replace('#/\*.*?\*/|//[^\n]*#s', '', $source);
+
+            if (preg_match('/->options\(\s*[A-Za-z_\\\\]+::class\s*\)/', $source) === 1) {
+                $offenders[] = basename((string) $file->getPathname());
+            }
+        }
+
+        sort($offenders);
+
+        $this->assertSame(
+            [],
+            $offenders,
+            'A component passed an enum class to ->options(). The packaged enums do not '
+            .'implement Filament\\Support\\Contracts\\HasLabel, so Filament silently renders '
+            .'raw case names. Map ->cases() to ->getLabel() explicitly instead.',
+        );
+    }
+
+    /**
      * @return list<SplFileInfo>
      */
     private function phpFilesUnder(string $directory): array

@@ -97,6 +97,48 @@ class HostCouplingTest extends TestCase
     }
 
     /**
+     * No component may hand an enum class straight to `->options()`.
+     *
+     * The twin of the same gate in ai-posts-filament. This package is already
+     * clean — every `->options()` here takes an array or a method call — so this
+     * test starts green and stays that way. That is the point: the failure mode
+     * is silent. Filament does not throw when the enum lacks `HasLabel`, it
+     * falls back to `$case->name` (filament/tables
+     * `Filters/Concerns/HasOptions.php`), so a filter renders `InProgress`
+     * instead of the translated label while every other test still passes.
+     *
+     * The packaged enums deliberately do not implement `HasLabel`: it lives in
+     * `filament/support`, which the headless packages must not depend on.
+     */
+    #[Test]
+    public function no_component_passes_an_enum_class_to_options(): void
+    {
+        $offenders = [];
+
+        foreach ($this->phpFilesUnder(__DIR__.'/../src') as $file) {
+            $source = (string) file_get_contents($file->getPathname());
+
+            // `//[^\n]*`, never `//.*$` — under /s the dot matches newlines, so
+            // the latter swallows the file from its first line comment onwards.
+            $code = (string) preg_replace('#/\*.*?\*/|//[^\n]*#s', '', $source);
+
+            if (preg_match('/->options\(\s*[A-Za-z_\\\\]+::class\s*\)/', $code) === 1) {
+                $offenders[] = basename((string) $file->getPathname());
+            }
+        }
+
+        sort($offenders);
+
+        $this->assertSame(
+            [],
+            $offenders,
+            'A component passed an enum class to ->options(). The packaged enums do not '
+            .'implement Filament\\Support\\Contracts\\HasLabel, so Filament silently renders '
+            .'raw case names. Map ->cases() to ->getLabel() explicitly instead.',
+        );
+    }
+
+    /**
      * @return list<SplFileInfo>
      */
     private function phpFilesUnder(string $directory): array

@@ -61,7 +61,13 @@ class BlogProductSeriesTable
             ->defaultSort('created_at', 'desc')
             ->filters([
                 SelectFilter::make('status')
-                    ->options(BlogProductSeriesStatus::class)
+                    // Same seam as BlogExternalLinksTable: the packaged enum does not
+                    // implement Filament's HasLabel, because that would couple the
+                    // headless ai-posts package to filament/support. Passing the class
+                    // would render raw case names, so build the list explicitly.
+                    ->options(fn (): array => collect(BlogProductSeriesStatus::cases())
+                        ->mapWithKeys(fn (BlogProductSeriesStatus $case): array => [$case->value => $case->getLabel()])
+                        ->all())
                     ->label(__('Status')),
             ]);
     }
