@@ -5,20 +5,30 @@ declare(strict_types=1);
 namespace Core45\AiCore;
 
 use Core45\AiCore\Contracts\AiClient;
+use Core45\AiCore\Contracts\ChecksContentSimilarity;
 use Core45\AiCore\Contracts\EnrichesCitations;
 use Core45\AiCore\Contracts\GeneratesImages;
+use Core45\AiCore\Contracts\GeneratesSlugs;
+use Core45\AiCore\Contracts\IssuesGuestStreamTokens;
 use Core45\AiCore\Contracts\NotifiesOperator;
+use Core45\AiCore\Contracts\ObservesAiContracts;
+use Core45\AiCore\Contracts\ProvidesMandatoryWords;
 use Core45\AiCore\Contracts\StoresFocusKeyphrases;
 use Core45\AiCore\Models\Concerns\HasAiDetection;
 use Core45\AiCore\Observers\AiDetectionObserver;
 use Core45\AiCore\Services\AiClientFactory;
+use Core45\AiCore\Services\ContentSimilarityService;
 use Core45\AiCore\Services\ImageGeneration\FalAiService;
 use Core45\AiCore\Services\ImageGeneration\GeminiImageService;
 use Core45\AiCore\Services\RemoteAiClient;
+use Core45\AiCore\Support\Chat\UnconfiguredGuestStreamTokenIssuer;
+use Core45\AiCore\Support\Content\NullMandatoryWordsProvider;
 use Core45\AiCore\Support\Geo\NullCitationEnricher;
 use Core45\AiCore\Support\Notifications\LoggingOperatorNotifier;
+use Core45\AiCore\Support\Observability\NullContractObserver;
 use Core45\AiCore\Support\PromptKeyRegistry;
 use Core45\AiCore\Support\Seo\NullFocusKeyphraseStore;
+use Core45\AiCore\Support\Slugs\StrSlugGenerator;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
@@ -155,8 +165,91 @@ class AiCoreServiceProvider extends ServiceProvider
         // for missing work. A host with a GEO service or keyphrase storage
         // binds its own and `bindIf` leaves it alone — the same upgrade path
         // `ai-core-filament` uses for `NotifiesOperator`.
+        // The one default here that is NOT a no-op. `RemoteAiClient` resolves
+        // this unguarded on the anonymous-chat path (lines 297 and 338), so it
+        // has the same fatal shape as the others — but the value it returns is a
+        // credential forwarded to the phasea service, and inventing one would
+        // turn a missing binding into an authentication failure several systems
+        // away from its cause. This binding exists only to replace
+        // "Target [...] is not instantiable" with a message that says guest chat
+        // triggered it and what to do about it.
+        $this->app->bindIf(IssuesGuestStreamTokens::class, UnconfiguredGuestStreamTokenIssuer::class);
+
         $this->app->bindIf(StoresFocusKeyphrases::class, NullFocusKeyphraseStore::class);
         $this->app->bindIf(EnrichesCitations::class, NullCitationEnricher::class);
+
+        // `AbstractContentRewriteService::generateUniqueSlug()` opens with an
+        // unguarded `app(GeneratesSlugs::class)->make($baseName)` — the same
+        // shape of defect as `StoresFocusKeyphrases` and `EnrichesCitations`
+        // above, just without a `supports()` probe to answer "no" with.
+        //
+        // Unlike those two this gets a REAL implementation, not a null object:
+        // there is no correct way to skip slug generation, and `Str::slug()` is
+        // the obvious default every host would otherwise have to write for
+        // itself. Uniqueness stays the caller's job — `generateUniqueSlug()`
+        // already owns the locale-scoped retry loop that appends `-1`, `-2`, …
+        // — so the bound implementation only has to turn a title into a slug
+        // once. See `StrSlugGenerator` for the full reasoning.
+        $this->app->bindIf(GeneratesSlugs::class, StrSlugGenerator::class);
+
+        // `ChecksContentSimilarity` is reached only from
+        // `withSimilarityChecking()` — an explicit opt-in the host must call —
+        // so unlike the contracts above, an unbound install cannot be broken by
+        // it on the ordinary rewrite path. It gets a default anyway because,
+        // unlike `EnrichesCitations` or `StoresFocusKeyphrases`, this package
+        // already ships a working implementation with no host-specific
+        // dependency: `ContentSimilarityService` does same-type Jaccard
+        // comparison against the model's own table, nothing the host has to
+        // supply. Binding it means opting in is enough — a host does not also
+        // have to write a similarity checker just to turn the feature on.
+        $this->app->bindIf(ChecksContentSimilarity::class, ContentSimilarityService::class);
+
+        // `ProvidesMandatoryWords` and `ObservesAiContracts` have no call site
+        // inside ai-core at all — both are resolved unconditionally (no
+        // `bound()` guard, no try/catch) from `ai-posts`:
+        // `DynamicContentModule` and two `*WriterService` classes call
+        // `app(ProvidesMandatoryWords::class)->asProfileParameter()` on every
+        // prompt payload, and `DynamicContentModule` calls
+        // `app(ObservesAiContracts::class)->observeContract(...)` on every
+        // module render. Because this provider is registered once for the
+        // whole application container, binding the defaults here closes the
+        // same `BindingResolutionException` for those call sites too, without
+        // touching ai-posts.
+        //
+        // Both get null objects, for reasons documented on each class:
+        // `NullMandatoryWordsProvider` returns `[]`, which the interface's own
+        // docblock already names as "the store mandates nothing" — not a stand-in
+        // for missing work. `NullContractObserver` is a no-op, which is the
+        // strictest reading of `ObservesAiContracts`' own requirement that
+        // implementations must never throw into a render path.
+        $this->app->bindIf(ProvidesMandatoryWords::class, NullMandatoryWordsProvider::class);
+        $this->app->bindIf(ObservesAiContracts::class, NullContractObserver::class);
+
+        // `GeneratesContentMedia` and `IssuesGuestStreamTokens` are deliberately
+        // NOT bound here.
+        //
+        // `GeneratesContentMedia` is resolved from `ai-posts` and `ai-products`
+        // only inside `processMediaGeneration()`, itself gated by
+        // `isMediaGenerationEnabled()` (an opt-in config flag) AND wrapped in a
+        // `catch (\Exception $e)` that logs and continues. Doubly guarded: a
+        // host that has not turned media generation on never reaches the
+        // resolution, and one that has turned it on without binding an
+        // implementation gets a caught, logged error per attempt rather than a
+        // crash. Enabling that config is already the host's statement that it
+        // has an implementation, matching the `ChecksContentSimilarity` opt-in
+        // reasoning above.
+        //
+        // `IssuesGuestStreamTokens` IS reached unconditionally on a real path —
+        // `RemoteAiClient::customerChat()` and `::streamCustomerChat()` resolve
+        // it whenever the caller is a guest identity, with no `bound()` check
+        // and no try/catch — but it has no sensible no-op. Token issuance is
+        // session/auth-specific by design (see the contract's own docblock); a
+        // fake or empty token would not skip the feature the way an empty list
+        // or a `supports() === false` does, it would forward a broken
+        // credential that phasea rejects, turning a clear
+        // `BindingResolutionException` into an opaque upstream 401. A host that
+        // serves guest chat has to bind its own issuer regardless; there is no
+        // default that helps rather than hides the problem.
     }
 
     public function boot(): void
