@@ -49,20 +49,29 @@ if (!is_dir($packagesDir)) {
 }
 
 /**
- * The tracked paths under `packages/`, relative to the repository root.
+ * The paths under `packages/` git would keep, relative to the repository root.
  *
  * Deliberately `git ls-files` rather than a directory walk. A walk sees
  * `vendor/` trees from the per-package suites, `.phpunit.cache`, and whatever
  * else a local run left behind, so its "inventory" changes depending on who ran
- * what last — which is the opposite of what a gate needs. The tracked set is
- * the same on every machine and in CI, and it is also the only set a reviewer
- * can actually see in a diff.
+ * what last — which is the opposite of what a gate needs. `--exclude-standard`
+ * gets that same immunity from `.gitignore` instead, without inventing a second
+ * ignore list to keep in sync.
+ *
+ * `--others` matters and was missing. With `--cached` alone the set is TRACKED
+ * files only, so a file that has been written but not yet committed is
+ * invisible: the gate passes on the commit that ADDS it and only fails on the
+ * next one, blaming a commit that changed nothing. That is not hypothetical —
+ * commit 0f61095 shipped a manifest missing nine files added in that same
+ * commit, and the gate had passed, because at the moment it ran those nine
+ * files were untracked. An addition gate that cannot see additions until they
+ * are already history is measuring the wrong set.
  *
  * @return list<string>
  */
 function trackedPackageFiles(string $root): array
 {
-    $command = 'git -C '.escapeshellarg($root).' ls-files -z -- packages';
+    $command = 'git -C '.escapeshellarg($root).' ls-files -z --cached --others --exclude-standard -- packages';
     $output = shell_exec($command);
 
     if (!is_string($output)) {
