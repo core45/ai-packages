@@ -20,7 +20,7 @@ use Filament\Actions\BulkAction;
  *
  *     ->toolbarActions([
  *         BulkActionGroup::make([
- *             ...AiCoreActions::forPostsTableToolbar(),
+ *             ...AiCoreActions::forTableToolbar('post'),
  *         ]),
  *     ])
  *
@@ -30,14 +30,23 @@ use Filament\Actions\BulkAction;
 class AiCoreActions
 {
     /**
-     * ai-core's share of the bulk actions on a posts table toolbar.
+     * ai-core's share of the bulk actions on a content table's toolbar.
      *
+     * This was `forPostsTableToolbar()`, with `'post'` hardcoded — blog
+     * knowledge inside the package that is supposed to have none. A store with
+     * no blog could not use it, and the name told a webinar table it was in the
+     * wrong place. The actions themselves were always generic; only the name and
+     * the key were not.
+     *
+     * @param  string  $modelKey  a key registered in `config('ai.models')` naming
+     *                            the records the table lists — 'post',
+     *                            'product', 'webinar', or the consuming app's own
      * @return list<BulkAction>
      */
-    public static function forPostsTableToolbar(): array
+    public static function forTableToolbar(string $modelKey): array
     {
         return [
-            RunSimilarityAuditAction::makeBulkAction('post'),
+            RunSimilarityAuditAction::makeBulkAction($modelKey),
             CheckAiDetectionAction::makeBulkAction(),
         ];
     }

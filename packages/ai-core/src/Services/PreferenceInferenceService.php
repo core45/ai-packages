@@ -259,18 +259,17 @@ class PreferenceInferenceService
     /**
      * Analyze common topics the user asks about.
      *
+     * The topic taxonomy is host-supplied via config: ai-core is a
+     * domain-neutral package and cannot know the consuming app's subject
+     * matter (e-commerce, healthcare, etc.), so it is not hardcoded here.
+     *
      * @param  Collection<int, AIConversation>  $conversations
      * @return array<int, array{type: string, value: string, confidence: float, content: string}>
      */
     protected function inferTopicPreferences(Collection $conversations): array
     {
-        $topicPatterns = [
-            'orders' => ['/order/i', '/delivery/i', '/shipping/i', '/tracking/i'],
-            'products' => ['/product/i', '/item/i', '/stock/i', '/availability/i', '/price/i'],
-            'account' => ['/account/i', '/password/i', '/login/i', '/profile/i', '/settings/i'],
-            'payments' => ['/payment/i', '/invoice/i', '/refund/i', '/receipt/i', '/billing/i'],
-            'support' => ['/help/i', '/problem/i', '/issue/i', '/not working/i', '/error/i'],
-        ];
+        /** @var array<string, list<string>> $topicPatterns */
+        $topicPatterns = config('ai.topic_patterns', []);
 
         $topicCounts = array_fill_keys(array_keys($topicPatterns), 0);
         $totalMessages = 0;

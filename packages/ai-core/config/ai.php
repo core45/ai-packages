@@ -111,4 +111,33 @@ return [
         'heartbeat_interval' => (int) env('AI_STREAM_HEARTBEAT_INTERVAL', 15),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Topic Patterns
+    |--------------------------------------------------------------------------
+    | Taxonomy used by PreferenceInferenceService and UsageAnalyticsService to
+    | classify chat messages into topics for preference inference and usage
+    | analytics. Each key is a topic name; each value is a list of regex
+    | patterns — a message matches the topic if ANY pattern matches.
+    |
+    | ai-core is domain-neutral and cannot know what the consuming app is
+    | about, so this is deliberately NOT empty by default. The values below
+    | are an EXAMPLE taxonomy from an e-commerce host (orders, products,
+    | payments, ...). They ship as defaults — not an empty array — only so
+    | behaviour does not silently change for apps that already rely on them.
+    | A consuming app in another domain (or without e-commerce concerns)
+    | MUST override this key in its own config/ai.php with its own taxonomy
+    | (or an empty array to disable topic classification).
+    |
+    | @var array<string, list<string>>
+    */
+    'topic_patterns' => [
+        'orders' => ['/order/i', '/delivery/i', '/shipping/i', '/tracking/i'],
+        'products' => ['/product/i', '/item/i', '/stock/i', '/availability/i', '/price/i'],
+        'account' => ['/account/i', '/password/i', '/login/i', '/profile/i', '/settings/i'],
+        'payments' => ['/payment/i', '/invoice/i', '/refund/i', '/receipt/i', '/billing/i'],
+        'support' => ['/help/i', '/problem/i', '/issue/i', '/not working/i', '/error/i'],
+        'general' => ['/how/i', '/what/i', '/when/i', '/where/i', '/why/i'],
+    ],
+
 ];

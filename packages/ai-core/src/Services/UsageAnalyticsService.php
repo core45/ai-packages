@@ -239,18 +239,18 @@ class UsageAnalyticsService
     /**
      * Get topic distribution from conversations.
      *
+     * The topic taxonomy is host-supplied via config: ai-core is a
+     * domain-neutral package and cannot know the consuming app's subject
+     * matter (e-commerce, healthcare, etc.), so it is not hardcoded here.
+     * Each topic maps to a list of patterns; a topic matches a message if
+     * ANY of its patterns matches.
+     *
      * @return Collection<int, array{topic: string, count: int}>
      */
     public function getTopicDistribution(int $days = 30): Collection
     {
-        $topicPatterns = [
-            'orders' => '/order|delivery|shipping|tracking/i',
-            'products' => '/product|item|stock|availability|price/i',
-            'account' => '/account|password|login|profile|settings/i',
-            'payments' => '/payment|invoice|refund|receipt|billing/i',
-            'support' => '/help|problem|issue|not working|error/i',
-            'general' => '/how|what|when|where|why/i',
-        ];
+        /** @var array<string, list<string>> $topicPatterns */
+        $topicPatterns = config('ai.topic_patterns', []);
 
         $messages = AIConversationMessage::query()
             ->where('role', 'user')
@@ -260,10 +260,12 @@ class UsageAnalyticsService
         $topicCounts = array_fill_keys(array_keys($topicPatterns), 0);
 
         foreach ($messages as $content) {
-            foreach ($topicPatterns as $topic => $pattern) {
-                if (preg_match($pattern, $content)) {
-                    $topicCounts[$topic]++;
-                    break; // Only count primary topic
+            foreach ($topicPatterns as $topic => $patterns) {
+                foreach ($patterns as $pattern) {
+                    if (preg_match($pattern, $content)) {
+                        $topicCounts[$topic]++;
+                        break 2; // Only count primary topic
+                    }
                 }
             }
         }

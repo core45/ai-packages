@@ -31,7 +31,12 @@ class AiPostsActions
     /**
      * ai-posts' share of the bulk actions on a posts table toolbar.
      *
-     * Spread this BEFORE `AiCoreActions::forPostsTableToolbar()`.
+     * Spread this BEFORE `AiCoreActions::forTableToolbar('post')`.
+     *
+     * The name stays blog-specific here but does not in `AiCoreActions`: this
+     * package IS the blog, so knowing about posts is its job. `ai-core` is the
+     * domain-neutral foundation, so the same factory there takes the registry
+     * key as an argument.
      *
      * @return list<BulkAction>
      */
