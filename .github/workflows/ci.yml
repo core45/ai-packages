@@ -12,13 +12,25 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # Pinned deliberately rather than expressed as a range. Filament behaviour
-    # the packages rely on is verified against 5.7.6 specifically, so CI proves
-    # the matrix that was actually checked instead of one asserted from memory.
+    # Both ends of the declared range, because a library that only ever resolves
+    # to the top has not tested the constraint it publishes.
+    #
+    # The floor is not what the manifests appear to say. They require
+    # `laravel/framework: ^13.0` and `filament/filament: ^5.7`, but
+    # `composer update --prefer-lowest` resolves to Laravel 13.26.1 and Filament
+    # 5.7.6 — the rest of the graph (Filament, Livewire 4, Testbench 11) will not
+    # go lower. Those are exactly the versions the plan records as the verified
+    # matrix, which is why the constraints are deliberately NOT narrowed to
+    # `^13.26.1` / `^5.7.6`: narrowing would lock consumers out of nothing and
+    # change no resolution. What was actually missing was a job that exercises
+    # the floor, which is this one.
     strategy:
       fail-fast: false
       matrix:
         php: ['8.4']
+        dependencies: ['highest', 'lowest']
+
+    name: test (php ${{ matrix.php }}, ${{ matrix.dependencies }} deps)
 
     steps:
       - uses: actions/checkout@v4
@@ -34,16 +46,45 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/composer/files
-          key: composer-${{ matrix.php }}-${{ hashFiles('composer.json') }}
-          restore-keys: composer-${{ matrix.php }}-
+          key: composer-${{ matrix.php }}-${{ matrix.dependencies }}-${{ hashFiles('composer.json') }}
+          restore-keys: composer-${{ matrix.php }}-${{ matrix.dependencies }}-
 
       - name: Install dependencies
-        run: composer update --prefer-dist --no-interaction --no-progress
+        run: |
+          if [ "${{ matrix.dependencies }}" = "lowest" ]; then
+            composer update --prefer-lowest --prefer-dist --no-interaction --no-progress
+          else
+            composer update --prefer-dist --no-interaction --no-progress
+          fi
+
+      # Printed rather than asserted. Pinning the expected versions here would
+      # mean editing this file every time the floor legitimately moves, and the
+      # job failing is already the signal that matters. This makes the run log
+      # say which matrix was actually exercised, so the plan's recorded matrix
+      # can be checked against reality instead of memory.
+      - name: Report resolved versions
+        run: composer show laravel/framework filament/filament livewire/livewire | grep -E '^(name|versions)'
 
       - name: Formatting
         run: vendor/bin/pint --test
 
+      # Highest only, deliberately. PHPStan's inference depends on the installed
+      # framework's own type declarations, so the same correct code analyses
+      # differently across versions — and the baseline can only be generated
+      # against one of them.
+      #
+      # The concrete case: at Laravel 13.26.1, PHPStan reports
+      # `AbstractContentRewriteService.php:1253` as "nullsafe property access on
+      # non-nullable type Model", and at 13.29.0 it does not. The value comes
+      # from `$archetype = $model ? $this->resolveArchetype($model) : null;`
+      # against an abstract declared `?Model`, so it is genuinely nullable and
+      # the `?->` is correct. Removing it to satisfy the older inference would
+      # replace a correct nullsafe with a fatal.
+      #
+      # So the lowest job proves the code RUNS on the floor — tests and
+      # formatting — and static analysis stays pinned to one resolution.
       - name: Static analysis
+        if: matrix.dependencies == 'highest'
         run: vendor/bin/phpstan analyse --no-progress
 
       - name: Tests
