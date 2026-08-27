@@ -6,6 +6,7 @@ namespace Core45\AiCore\Filament\Resources\AIPromptOverride\Schemas;
 
 use Core45\AiCore\Contracts\AiClient;
 use Core45\AiCore\Models\AIPromptOverride;
+use Core45\AiCore\Support\PromptKeyRegistry;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -20,36 +21,26 @@ use Illuminate\Support\HtmlString;
 class AIPromptOverrideForm
 {
     /**
-     * Maps a phaseb override key to the phasea template whose `system_prompt` is
-     * the base prompt an admin writes that override against (v2.6 design §2.5,
-     * phase 48). The mapping is not guessed by name: it mirrors the authoritative
-     * routing in `AbstractContentRewriteService::getPromptOverrideKey()` /
+     * The phasea template whose `system_prompt` is the base prompt an admin
+     * writes an override against now travels with the key, supplied by whichever
+     * package registered it (plan §9 D14).
+     *
+     * It used to be a const map here, which meant this package carried a second
+     * full copy of the prompt taxonomy — `product_*`, `webinar_part_element_*`
+     * and the rest — alongside the one in `ai-core`. Two enumerations of the same
+     * thing in two packages, either of which could go stale against the domain
+     * services that actually own the keys.
+     *
+     * The routing itself is unchanged and still is not guessed by name: it
+     * mirrors `AbstractContentRewriteService::getPromptOverrideKey()` /
      * `getSeoPromptOverrideKey()`, where every content-rewrite override rides
-     * phasea's `rewrite.field_rewrite` template and every SEO override rides
-     * `rewrite.seo_field`.
-     *
-     * Keys absent from this map (the admin/customer assistant prompts, which live
-     * in phasea AGENTS rather than the prompt catalog, and the generic
-     * content_generation/seo_generation keys that no live surface routes) resolve
-     * to the explanatory placeholder — the same graceful degradation the old
-     * `getBasePromptByKey()` gave via its `default => null` arm.
-     *
-     * @var array<string, string>
+     * `rewrite.field_rewrite` and every SEO override rides `rewrite.seo_field`.
+     * Keys with no template — the admin/customer assistant prompts, which live in
+     * phasea AGENTS rather than the prompt catalog, and the generic
+     * content_generation/seo_generation keys that no live surface routes —
+     * resolve to null and fall back to the explanatory placeholder, exactly as
+     * the old `default => null` arm did.
      */
-    private const OVERRIDE_KEY_TO_TEMPLATE = [
-        'product_rewrite_system' => 'rewrite.field_rewrite',
-        'post_rewrite_system' => 'rewrite.field_rewrite',
-        'webinar_rewrite_system' => 'rewrite.field_rewrite',
-        'webinar_part_rewrite_system' => 'rewrite.field_rewrite',
-        'webinar_part_element_rewrite_system' => 'rewrite.field_rewrite',
-        'product_category_rewrite_system' => 'rewrite.field_rewrite',
-        'product_seo_system' => 'rewrite.seo_field',
-        'post_seo_system' => 'rewrite.seo_field',
-        'webinar_seo_system' => 'rewrite.seo_field',
-        'webinar_part_seo_system' => 'rewrite.seo_field',
-        'webinar_part_element_seo_system' => 'rewrite.seo_field',
-        'product_category_seo_system' => 'rewrite.seo_field',
-    ];
 
     /**
      * Container key under which the fetched catalog is memoised for the current
@@ -313,7 +304,7 @@ class AIPromptOverrideForm
             return null;
         }
 
-        $templateKey = self::OVERRIDE_KEY_TO_TEMPLATE[$promptKey] ?? null;
+        $templateKey = app(PromptKeyRegistry::class)->templateFor($promptKey);
 
         if ($templateKey === null) {
             return null;

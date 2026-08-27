@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core45\AiCore\Models;
 
 use Core45\AiCore\Services\KnowledgeService;
+use Core45\AiCore\Support\PromptKeyRegistry;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -162,47 +163,33 @@ class AIPromptOverride extends Model
     }
 
     /**
-     * Available prompt keys.
+     * Every prompt key any installed package has registered.
+     *
+     * This method used to enumerate the whole taxonomy inline, including keys
+     * owned by `ai-products` and `ai-webinars` — the §2.5 item 3 leak. It now
+     * asks the registry, which each package populates from its own provider
+     * (plan §9 D14). `ai-core` names only the seven keys it owns.
+     *
+     * An application with only `ai-core` installed therefore sees seven keys
+     * instead of nineteen, which is the point: the missing twelve had no code
+     * behind them there.
      *
      * @return array<string, string>
      */
     public static function availablePromptKeys(): array
     {
-        return [
-            // Admin AI Assistant
-            'admin_system' => 'Admin System Prompt',
-            'query_instructions' => 'Query Instructions (data fetching)',
-            'action_instructions' => 'Action Instructions (data modification)',
-
-            // Customer AI Assistant
-            'customer_system' => 'Customer System Prompt (authenticated)',
-            'anonymous_system' => 'Anonymous System Prompt (public)',
-
-            // Content Generation
-            'content_generation' => 'Content Generation Prompt',
-            'seo_generation' => 'SEO Generation Prompt',
-
-            // Bulk Content Rewrite - Content prompts
-            'product_rewrite_system' => 'Product Content Rewrite System Prompt',
-            'post_rewrite_system' => 'Post Content Rewrite System Prompt',
-            'webinar_rewrite_system' => 'Webinar Content Rewrite System Prompt',
-            'webinar_part_rewrite_system' => 'Webinar Part Content Rewrite System Prompt',
-            'webinar_part_element_rewrite_system' => 'Webinar Part Element Content Rewrite System Prompt',
-            'product_category_rewrite_system' => 'Product Category Content Rewrite System Prompt',
-
-            // Bulk Content Rewrite - SEO prompts (separate from content)
-            'product_seo_system' => 'Product SEO Generation System Prompt',
-            'post_seo_system' => 'Post SEO Generation System Prompt',
-            'webinar_seo_system' => 'Webinar SEO Generation System Prompt',
-            'webinar_part_seo_system' => 'Webinar Part SEO Generation System Prompt',
-            'webinar_part_element_seo_system' => 'Webinar Part Element SEO Generation System Prompt',
-            'product_category_seo_system' => 'Product Category SEO Generation System Prompt',
-        ];
+        return app(PromptKeyRegistry::class)->all();
     }
 
     /**
      * Filament badge colour for a prompt key, grouped by the audience the key
      * belongs to (admin / customer / content).
+     *
+     * The `match` this used to be named `product_rewrite_system` directly, so
+     * even the colour table leaked a domain. The colour now travels with the
+     * key, supplied by whichever package registered it, and an unregistered
+     * key resolves to `gray` rather than throwing — override rows outlive the
+     * package that registered their key.
      *
      * PURE PRESENTATION, DELIBERATELY HOST-SIDE (plan 48-20). It moved here from
      * `App\Services\AI\Prompts\PromptExamples::getCategoryColor()` when that
@@ -213,11 +200,6 @@ class AIPromptOverride extends Model
      */
     public static function promptKeyBadgeColor(string $promptKey): string
     {
-        return match ($promptKey) {
-            'admin_system', 'query_instructions', 'action_instructions' => 'info',
-            'customer_system', 'anonymous_system' => 'success',
-            'content_generation', 'seo_generation', 'product_rewrite_system' => 'warning',
-            default => 'gray',
-        };
+        return app(PromptKeyRegistry::class)->colorFor($promptKey);
     }
 }

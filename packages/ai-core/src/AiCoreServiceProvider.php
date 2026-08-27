@@ -14,6 +14,7 @@ use Core45\AiCore\Services\ImageGeneration\FalAiService;
 use Core45\AiCore\Services\ImageGeneration\GeminiImageService;
 use Core45\AiCore\Services\RemoteAiClient;
 use Core45\AiCore\Support\Notifications\LoggingOperatorNotifier;
+use Core45\AiCore\Support\PromptKeyRegistry;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
@@ -70,6 +71,14 @@ class AiCoreServiceProvider extends ServiceProvider
         $this->app->scoped(AiClient::class, fn (Application $app) => $app->make(RemoteAiClient::class));
 
         $this->app->scoped(AiClientFactory::class);
+
+        // D14: the prompt-key catalog is core-held but NOT core-authored. A
+        // plain singleton, not `scoped()`: registration happens once per
+        // process from each package's provider, and re-resolving it per job
+        // would hand out an empty registry to every worker after the first.
+        $this->app->singleton(PromptKeyRegistry::class);
+
+        $this->registerOwnPromptKeys();
 
         // D1/A4: the package owns the LOOKUP LOGIC, the consumer supplies the
         // MAP — as config, not as code. A drop-in install registers its models
@@ -158,6 +167,47 @@ class AiCoreServiceProvider extends ServiceProvider
                 __DIR__.'/../database/migrations' => database_path('migrations'),
             ], 'ai-core-migrations');
         }
+    }
+
+    /**
+     * Register the prompt keys `ai-core` itself owns — and only those.
+     *
+     * The seven here are the assistant and generic-content prompts served by
+     * this package. Every `*_rewrite_system` / `*_seo_system` key belongs to
+     * the domain package whose service supplies it via
+     * `AbstractContentRewriteService::getPromptOverrideKey()`, and is
+     * registered from that package's provider. Nothing in this method names a
+     * domain, and the `PackagesHaveNoDomainKeysTest` boundary test keeps it
+     * that way.
+     *
+     * Colours are carried over from the `match` that used to live on the model.
+     * Note the one asymmetry that came with them: `content_generation` and
+     * `seo_generation` are `warning`, and so is `product_rewrite_system` (now
+     * registered by `ai-products`) — but no other rewrite or SEO key is. That
+     * looks like drift rather than intent; it is preserved verbatim here so
+     * this change moves the taxonomy without also silently restyling the admin
+     * table. Worth a deliberate decision separately.
+     */
+    private function registerOwnPromptKeys(): void
+    {
+        $this->app->resolving(PromptKeyRegistry::class, static function (PromptKeyRegistry $registry): void {
+            $registry->registerMany([
+                // Admin AI assistant.
+                'admin_system' => ['label' => 'Admin System Prompt', 'color' => 'info'],
+                'query_instructions' => ['label' => 'Query Instructions (data fetching)', 'color' => 'info'],
+                'action_instructions' => ['label' => 'Action Instructions (data modification)', 'color' => 'info'],
+
+                // Customer AI assistant.
+                'customer_system' => ['label' => 'Customer System Prompt (authenticated)', 'color' => 'success'],
+                'anonymous_system' => ['label' => 'Anonymous System Prompt (public)', 'color' => 'success'],
+
+                // Generic content generation. No live surface routes these to a
+                // phasea template, hence no `template` — the form preview falls
+                // back to its placeholder, as it always did.
+                'content_generation' => ['label' => 'Content Generation Prompt', 'color' => 'warning'],
+                'seo_generation' => ['label' => 'SEO Generation Prompt', 'color' => 'warning'],
+            ]);
+        });
     }
 
     /**

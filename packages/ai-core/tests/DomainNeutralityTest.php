@@ -130,4 +130,56 @@ class DomainNeutralityTest extends TestCase
 
         $this->assertSame([], $offenders, "ai-core is domain-neutral; move this to config:\n".implode("\n", $offenders));
     }
+
+    /**
+     * No source file in ai-core may enumerate another package's prompt key.
+     *
+     * `AIPromptOverride::availablePromptKeys()` used to list all nineteen keys in
+     * the system, twelve of which belong to `ai-products`, `ai-webinars` and
+     * `ai-posts`. It survived an earlier audit because the tracker box was ticked
+     * when `labels()` was *renamed* to `availablePromptKeys()` — the name changed,
+     * the taxonomy did not. This is the executable form of the rule, so the next
+     * rename cannot hide it again.
+     *
+     * It matches the key in quotes, which is how a key is written when it is
+     * being enumerated. Prose mentions in a docblock — and there are several,
+     * explaining exactly this history — are deliberately not matched.
+     */
+    #[Test]
+    public function no_source_file_enumerates_a_domain_prompt_key(): void
+    {
+        $domainKeys = [
+            'post_rewrite_system', 'post_seo_system',
+            'product_rewrite_system', 'product_seo_system',
+            'product_category_rewrite_system', 'product_category_seo_system',
+            'webinar_rewrite_system', 'webinar_seo_system',
+            'webinar_part_rewrite_system', 'webinar_part_seo_system',
+            'webinar_part_element_rewrite_system', 'webinar_part_element_seo_system',
+        ];
+
+        $offenders = [];
+        $root = __DIR__.'/../src';
+
+        /** @var \SplFileInfo $file */
+        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($root)) as $file) {
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+
+            $source = (string) file_get_contents($file->getPathname());
+
+            foreach ($domainKeys as $key) {
+                if (str_contains($source, "'".$key."'") || str_contains($source, '"'.$key.'"')) {
+                    $offenders[] = substr($file->getPathname(), strlen($root) + 1).' names '.$key;
+                }
+            }
+        }
+
+        $this->assertSame(
+            [],
+            $offenders,
+            "ai-core must not know another package's prompt keys; register them from "
+            ."that package's own provider into PromptKeyRegistry:\n".implode("\n", $offenders),
+        );
+    }
 }
