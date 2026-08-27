@@ -5,16 +5,20 @@ declare(strict_types=1);
 namespace Core45\AiCore;
 
 use Core45\AiCore\Contracts\AiClient;
+use Core45\AiCore\Contracts\EnrichesCitations;
 use Core45\AiCore\Contracts\GeneratesImages;
 use Core45\AiCore\Contracts\NotifiesOperator;
+use Core45\AiCore\Contracts\StoresFocusKeyphrases;
 use Core45\AiCore\Models\Concerns\HasAiDetection;
 use Core45\AiCore\Observers\AiDetectionObserver;
 use Core45\AiCore\Services\AiClientFactory;
 use Core45\AiCore\Services\ImageGeneration\FalAiService;
 use Core45\AiCore\Services\ImageGeneration\GeminiImageService;
 use Core45\AiCore\Services\RemoteAiClient;
+use Core45\AiCore\Support\Geo\NullCitationEnricher;
 use Core45\AiCore\Support\Notifications\LoggingOperatorNotifier;
 use Core45\AiCore\Support\PromptKeyRegistry;
+use Core45\AiCore\Support\Seo\NullFocusKeyphraseStore;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
@@ -128,6 +132,31 @@ class AiCoreServiceProvider extends ServiceProvider
 
             return $app->make($providers[$provider]);
         });
+
+        // The same defect as `GeneratesImages` above, in two more places. Found
+        // by asking what `composer require core45/ai-posts` actually does in an
+        // application that is not this project's own host.
+        //
+        // `AbstractContentRewriteService::processFocusKeyphrases()` opens with
+        // an unguarded `app(StoresFocusKeyphrases::class)` (line 530), and
+        // `processModel()` resolves `EnrichesCitations` at line 450 — BEFORE
+        // testing `config('geo.citation.enabled')` on the very next line, so
+        // turning the feature off could not prevent the failure. Both run on
+        // every rewrite, so with no binding a fresh install threw
+        // `BindingResolutionException` on the first Post rewrite it attempted.
+        // The citation one is the sharper case: `geo.citation.enabled` is not a
+        // key this package's `config/geo.php` ships, so the phase would have
+        // been skipped anyway. The install broke on a feature it was never
+        // going to run.
+        //
+        // Both interfaces lead with a `supports()` capability probe, so "this
+        // application does neither" is already expressible in the contract
+        // itself. These null objects are that answer, not a stub standing in
+        // for missing work. A host with a GEO service or keyphrase storage
+        // binds its own and `bindIf` leaves it alone — the same upgrade path
+        // `ai-core-filament` uses for `NotifiesOperator`.
+        $this->app->bindIf(StoresFocusKeyphrases::class, NullFocusKeyphraseStore::class);
+        $this->app->bindIf(EnrichesCitations::class, NullCitationEnricher::class);
     }
 
     public function boot(): void

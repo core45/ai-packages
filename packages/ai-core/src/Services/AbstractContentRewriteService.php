@@ -446,11 +446,18 @@ abstract class AbstractContentRewriteService
             // Phase 3b: Generate focus keyphrases for SeoIndexable
             $this->processFocusKeyphrases($model, $locales, $context, $results);
 
-            // Phase 3c: Citation enrichment for GEO
-            $citationEnricher = app(EnrichesCitations::class);
-            if (config('geo.citation.enabled')
-                && config('geo.citation.in_rewrite_pipeline')
-                && $citationEnricher->supports($model)) {
+            // Phase 3c: Citation enrichment for GEO.
+            //
+            // The config gates are tested BEFORE the container is asked for the
+            // enricher. They used to be tested after, so a disabled feature
+            // still resolved its service — and in an application that had not
+            // bound one, threw. A flag that cannot prevent the work its own
+            // feature does is not a flag.
+            $citationEnricher = config('geo.citation.enabled') && config('geo.citation.in_rewrite_pipeline')
+                ? app(EnrichesCitations::class)
+                : null;
+
+            if ($citationEnricher !== null && $citationEnricher->supports($model)) {
                 foreach ($locales as $locale) {
                     try {
                         $citationEnricher->enrich($model, $locale);
