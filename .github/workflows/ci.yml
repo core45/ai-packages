@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    # Pinned deliberately rather than expressed as a range. Filament behaviour
+    # the packages rely on is verified against 5.7.6 specifically, so CI proves
+    # the matrix that was actually checked instead of one asserted from memory.
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.4']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer:v2
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer/files
+          key: composer-${{ matrix.php }}-${{ hashFiles('composer.json') }}
+          restore-keys: composer-${{ matrix.php }}-
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Formatting
+        run: vendor/bin/pint --test
+
+      - name: Static analysis
+        run: vendor/bin/phpstan analyse --no-progress
+
+      - name: Tests
+        run: vendor/bin/pest
+
+      # The packages exist to be installable in any host application. A package
+      # that imports an App\ class is not, so this is a build failure and not a
+      # style nit. PackageWiringTest covers ai-posts from the inside; this
+      # catches the other four and any new package added later.
+      - name: No host coupling
+        run: |
+          if grep -rn --include='*.php' '^use App\\' packages/*/src packages/*/config packages/*/database 2>/dev/null; then
+            echo "::error::A package imports an App\\ class. Route it through ModelRegistry or a contract in src/Contracts/."
+            exit 1
+          fi
+          echo "No App\\ imports in any package."

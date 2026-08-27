@@ -1,0 +1,43 @@
+{
+    "name": "core45/ai-core",
+    "description": "Shared AI core for the phaseb AI package family: remote AI client, DTOs, contracts, exceptions, usage logging, circuit breaker, model registry, knowledge/learning system, async operations, prompt overrides.",
+    "type": "library",
+    "version": "0.1.0",
+    "license": "MIT",
+    "require": {
+        "php": "^8.4",
+        "laravel/framework": "^13.0",
+        "astrotomic/laravel-translatable": "^11.17",
+        "filament/filament": "^5.7",
+        "laravel/scout": "^10.25",
+        "league/commonmark": "^2.7",
+        "ramsey/uuid": "^4.7",
+        "stevebauman/purify": "^6.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Core45\\AiCore\\": "src/",
+            "Core45\\AiCore\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Core45\\AiCore\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Core45\\AiCore\\AiCoreServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

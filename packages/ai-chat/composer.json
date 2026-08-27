@@ -1,0 +1,39 @@
+{
+    "name": "core45/ai-chat",
+    "description": "Customer chat transport for the phaseb AI package family: CustomerAIService, guest stream token brokering, Livewire chat panel, SSE proxy, conversation persistence.",
+    "type": "library",
+    "version": "0.1.0",
+    "license": "MIT",
+    "require": {
+        "php": "^8.4",
+        "laravel/framework": "^13.0",
+        "core45/ai-core": "^0.1",
+        "livewire/livewire": "^4.4",
+        "stevebauman/purify": "^6.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Core45\\AiChat\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Core45\\AiChat\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Core45\\AiChat\\AiChatServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

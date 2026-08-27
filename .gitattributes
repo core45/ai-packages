@@ -1,0 +1,20 @@
+* text=auto eol=lf
+
+*.blade.php diff=html
+*.css       diff=css
+*.html      diff=html
+*.md        diff=markdown
+*.php       diff=php
+
+# Keep dev-only files out of `composer install --prefer-dist` archives.
+#
+# README.md is deliberately NOT export-ignored. The 00bb repo marks it
+# export-ignore, and that silently dropped every package README when files were
+# moved with `git archive` during Phase 0 of the consolidation — 31 of 34 files
+# arrived and each package was short by exactly one, which is invisible unless
+# you count. A package's README is the first thing a consumer reads; it belongs
+# in the distributed archive.
+/.github        export-ignore
+/phpstan.neon   export-ignore
+.gitattributes  export-ignore
+.gitignore      export-ignore
