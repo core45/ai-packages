@@ -58,31 +58,70 @@ Register the aliases before running it (see **Morph aliases** below).
 - **Rewrite base:** `Services\AbstractContentRewriteService` — domain packages
   subclass it and supply model resolution.
 
-## What the host must supply
+## How a host application integrates this
 
-`ai-core` contains **no** `App\` imports and boots standalone. In exchange the
-consuming app must bind these seams (see `App\Providers\AiServiceProvider` in
-phaseb for a worked example):
+`ai-core` contains **no** `App\` imports and boots standalone (see
+`App\Providers\AiServiceProvider` in phaseb for a worked example of every
+binding below).
 
-| Contract | Purpose |
-|---|---|
-| `Contracts\AiClient` | usually `Services\RemoteAiClient` |
-| `Contracts\IssuesGuestStreamTokens` | guest chat token brokering |
-| `Contracts\EnrichesCitations` | GEO citation enrichment during rewrite |
-| `Contracts\GeneratesSlugs` | slug generation for translated content |
-| `Contracts\ChecksContentSimilarity` | duplicate-content checking |
-| `Contracts\StoresFocusKeyphrases` | where SEO focus keyphrases are persisted |
-| `Contracts\GeneratesContentMedia` | image/media generation for a rewritten record |
-| `ModelRegistry` (singleton) | re-bind with your own model map — the package default is an EMPTY registry |
+### Contracts the host must bind
 
-Config keys with **no package default** (unset = that flow is skipped):
+Everything in `Core45\AiCore\Contracts\` (`packages/ai-core/src/Contracts/`).
+`AiCoreServiceProvider::register()` binds only two of them with a default;
+resolving any of the rest with nothing bound throws a
+`BindingResolutionException`/`Error` naming the interface at the moment that
+code path runs — not at boot.
 
-| Key | Read by |
-|---|---|
-| `ai.finalize_job` | `Models\AIContentBatch::checkCompletion()` |
-| `ai.analyze_feedback_job` | `Observers\AIConversationMessageObserver::updated()` |
-| `ai.filament.navigation_group` | the Filament resources (defaults to the string `'AI'`) |
-| `ai.factories.batchable_type` | `AIContentBatchFactory`, test fixtures only |
+| Contract | For | Bound by the package? |
+|---|---|---|
+| `AiClient` | the single task-oriented seam to the phasea service | Yes — `scoped()` to `Services\RemoteAiClient` unconditionally. No override point exists; there is no other driver. |
+| `NotifiesOperator` | short status messages the AI jobs send to the user who started the work | Yes — `bindIf()` to `Support\Notifications\LoggingOperatorNotifier` (logs only). `core45/ai-core-filament` binds a Filament-notification implementation over it if installed; an app that binds its own first keeps it. |
+| `IssuesGuestStreamTokens` | short-lived tokens for anonymous chat | **No.** Host must bind. |
+| `EnrichesCitations` | GEO citation enrichment during content rewrite | **No.** Host must bind. |
+| `GeneratesSlugs` | URL slug generation for translated content | **No.** Host must bind. |
+| `ChecksContentSimilarity` | duplicate-content guard used by the rewrite pipeline | **No.** Host must bind. |
+| `StoresFocusKeyphrases` | persists SEO focus keyphrases | **No.** Host must bind. |
+| `GeneratesContentMedia` | image/media generation for a rewritten record | **No.** Host must bind. |
+| `GeneratesImages` | raw image generation; two implementations ship (`Services\ImageGeneration\FalAiService`, `GeminiImageService`) but neither is bound automatically | **No.** Only resolved today by `core45/ai-posts-filament`'s rewrite action — a host without that package never touches it. |
+| `ProvidesMandatoryWords` | store-wide mandatory-word list injected into prompt parameters | **No.** Defined here, but only ever `app()`-resolved from `core45/ai-posts` (`BlogPostWriterService`, `BlogFaqWriterService`, `DynamicContentModule`) — required if you install that package. |
+| `ObservesAiContracts` | records what the host observed about a phasea prompt-contract capability, for exit-window observability only | **No.** Same as above — only called from `core45/ai-posts`. |
+| `AIContentable` | model-implemented (not container-bound): declares AI capabilities/content fields on a host Eloquent model | N/A — implement it on the model itself, not bound in the container. |
+| `AIQueryable` | model-implemented: declares AI-queryable fields/scopes/actions on a host Eloquent model | N/A — same as above. |
+| `ProvidesSeoIndexable` | model-implemented: `getOrCreateSeoIndexable()` on a content model | N/A — same as above. |
+
+`ModelRegistry` is not a contract but is also container-resolved: it is a
+`scoped()` singleton built in `register()` straight from `config('ai.models')`,
+`config('ai.url_slugs')` and `config('ai.seo_content_types')`. Re-binding it
+yourself is unnecessary — editing the config is enough.
+
+### Config keys the host is expected to set
+
+- **`ai.models`** — the `ModelRegistry` map (`key => model FQCN`). The
+  package ships **no default** for this key at all (it is absent from
+  `config/ai.php` entirely) — every app registers its own. Any package code
+  that calls `ModelRegistry::getModelClassOrFail($key)` for a key you have not
+  registered throws an `InvalidArgumentException` naming the missing key and
+  listing what *is* registered.
+- **`ai.base_url`** / **`ai.token`** (`AI_SERVICE_BASE_URL`, `AI_SERVICE_TOKEN`)
+  — no sensible default; `RemoteAiClient` needs both to reach the phasea
+  service.
+- **`ai.topic_patterns`** — the regex taxonomy `PreferenceInferenceService`
+  and `UsageAnalyticsService` use to classify chat messages into topics for
+  preference inference and usage analytics. Because `ai-core` is
+  domain-neutral it cannot supply a real default, so the shipped value is an
+  **example e-commerce taxonomy** (`orders`, `products`, `account`,
+  `payments`, `support`, `general` — see `config/ai.php`), kept non-empty only
+  so behaviour does not silently change for an app that already relied on it.
+  An app in another domain should replace it with its own taxonomy, or set it
+  to `[]` to disable topic classification outright.
+- **`ai.finalize_job`** / **`ai.analyze_feedback_job`** — host job class
+  names (`Models\AIContentBatch::checkCompletion()` and
+  `Observers\AIConversationMessageObserver::updated()`). No default; left
+  unset, the package explicitly skips that dispatch rather than guessing a
+  class.
+- `ai.filament.navigation_group` (defaults to `'AI'`) and
+  `ai.factories.batchable_type` (test fixtures only) — lower-stakes, listed
+  for completeness rather than because an install fails without them.
 
 ## Morph aliases (required, permanent)
 

@@ -14,7 +14,11 @@ Part of the phaseb AI extraction. As-built reference: `docs/AI_PACKAGES.md`.
 ## Requirements
 
 PHP 8.4+, Laravel 13, `core45/ai-core: ^0.1`. Declared dependencies:
-`livewire/livewire`, `stevebauman/purify`.
+`livewire/livewire`, `stevebauman/purify`. No Filament dependency, direct or
+transitive — `composer.json` names none, `AiChatServiceProvider` imports none,
+and nothing under `src/` references a Filament class. Of the three packages
+this README family covers, `ai-chat` is the only one that never required a
+Filament panel: it installs into a Livewire-only app with no admin UI at all.
 
 ## Installation
 
@@ -38,12 +42,19 @@ the routes.
 message feedback all live in `core45/ai-core`, which owns the whole `ai_*`
 schema.
 
-## What the host must supply
+## How a host application integrates this
 
 `ai-chat` contains **no** `App\` imports and boots standalone. Two contracts are
-seams the package defines and the consumer implements. The package deliberately
-ships no default binding — binding a host class from inside the package is what
+seams the package defines and the consumer implements — the full set defined
+under `Core45\AiChat\Contracts\`. Neither is bound by
+`AiChatServiceProvider` (it binds nothing at all — no `bind`/`bindIf`/
+`singleton`/`scoped` call exists in it); the package deliberately ships no
+default binding, since binding a host class from inside the package is what
 would make it unloadable elsewhere.
+
+There is no `config/ai-chat.php` — this package has no config file of its
+own and reads none; every setting it needs (stream tuning, base URL/token)
+comes from `core45/ai-core`'s `config('ai.*')`.
 
 | Contract | Supplies |
 |---|---|

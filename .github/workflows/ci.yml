@@ -61,6 +61,21 @@ jobs:
           fi
           echo "No App\\ imports in any package."
 
+      # Laravel's Migrator keys the `migrations` ledger on BASENAME, not path,
+      # and both ways of getting that wrong fail silently:
+      #
+      #   - the same basename in two packages -> one ledger row, so the second
+      #     migration never runs and nothing says so;
+      #   - two basenames creating one table -> two ledger rows, both run, and a
+      #     FRESH install throws "table already exists" while an existing one
+      #     upgrades fine. It passes where you test it and breaks where you ship.
+      #
+      # The second is not hypothetical: merging the 00bb fork brought in a second
+      # create_content_similarity_checks_table migration under a different
+      # timestamp, and nothing in the existing checks would have caught it.
+      - name: No migration collisions
+        run: php scripts/check-migration-collisions.php
+
       # D20: the five domain packages must install into an app with no Filament,
       # or one on a different panel. Filament lives only in the *-filament
       # packages. This is the gate that keeps that true — an `implements

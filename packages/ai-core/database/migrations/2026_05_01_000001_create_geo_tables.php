@@ -11,9 +11,23 @@ return new class extends Migration
     /**
      * Run the migrations.
      *
-     * Only `geo_profiles` is created here; `geo_score_snapshots` from the
-     * reference implementation is omitted since no model in this application
-     * uses it yet.
+     * THE FILENAME IS PLURAL AND THIS CREATES ONE TABLE. That is deliberate and
+     * renaming the file would break it.
+     *
+     * Laravel keys the `migrations` ledger on basename, so a package migration
+     * has to carry the basename the consuming installs already recorded — or it
+     * has no ledger row there, runs, and hits "table already exists" on a table
+     * they already have. The hosts' row is
+     * `2026_05_01_000001_create_geo_tables`, and their file creates both
+     * `geo_profiles` and `geo_score_snapshots`.
+     *
+     * Only `geo_profiles` belongs to this package. `geo_score_snapshots` is
+     * host-owned (`App\Models\GeoScoreSnapshot`) and no packaged model reads it.
+     * So the file keeps the hosts' basename, which is what makes the ledger line
+     * up, and creates the one table that is genuinely its own.
+     *
+     * A fresh install therefore gets `geo_profiles` and no snapshots table,
+     * which is correct: nothing in these packages needs one.
      */
     public function up(): void
     {
