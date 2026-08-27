@@ -14,6 +14,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User;
 
+/**
+ * @property string|null $model_type
+ * @property int|null $model_id
+ */
 class AIConversation extends Model implements AIQueryable
 {
     use HasFactory;
