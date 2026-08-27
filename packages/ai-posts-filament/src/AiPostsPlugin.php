@@ -7,6 +7,7 @@ namespace Core45\AiPosts\Filament;
 use Core45\AiPosts\Filament\Pages\ManagePostPipeline;
 use Core45\AiPosts\Filament\Resources\BlogExternalLinks\BlogExternalLinkResource;
 use Core45\AiPosts\Filament\Resources\BlogPostPipelineRuns\BlogPostPipelineRunResource;
+use Core45\AiPosts\Filament\Resources\BlogProductSeries\BlogProductSeriesResource;
 use Core45\AiPosts\Filament\Resources\BlogTopicBatches\BlogTopicBatchResource;
 use Core45\AiPosts\Filament\Resources\BlogTopicProfiles\BlogTopicProfileResource;
 use Core45\AiPosts\Filament\Resources\ContentModules\ContentModuleResource;
@@ -44,6 +45,7 @@ class AiPostsPlugin implements Plugin
             BlogPostPipelineRunResource::class,
             BlogExternalLinkResource::class,
             BlogTopicBatchResource::class,
+            BlogProductSeriesResource::class,
             BlogTopicProfileResource::class,
             ContentModuleResource::class,
         ]);
