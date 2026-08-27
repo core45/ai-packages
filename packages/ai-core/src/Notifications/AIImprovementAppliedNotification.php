@@ -86,7 +86,13 @@ class AIImprovementAppliedNotification extends Notification implements ShouldQue
      */
     public function toDatabase(object $notifiable): array
     {
-        if (!class_exists(FilamentNotification::class)) {
+        // Both classes are checked, not just the notification one: they ship in
+        // DIFFERENT composer packages (filament/notifications and
+        // filament/actions). `filament/filament` pulls both, so an app on a
+        // Filament panel always has the pair — but nothing stops an app from
+        // requiring filament/notifications alone, and there the guard would
+        // pass and `Action::make()` below would then fatal.
+        if (!class_exists(FilamentNotification::class) || !class_exists(Action::class)) {
             return $this->toArray($notifiable);
         }
 

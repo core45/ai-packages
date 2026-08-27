@@ -1,0 +1,36 @@
+name: CI
+
+# This workflow exists to give the standalone core45/ai-core repo (published
+# via `git subtree split` from this monorepo's packages/ai-core/ directory)
+# its own CI. Inside this monorepo it is inert: GitHub Actions only reads
+# workflow files under .github/workflows/ at the repository root, so this
+# file has no effect here. All paths below are relative to the package
+# directory itself, because in the split repo the package root IS the repo
+# root.
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Tests
+        run: vendor/bin/phpunit

@@ -53,6 +53,27 @@ jobs:
       # that imports an App\ class is not, so this is a build failure and not a
       # style nit. PackageWiringTest covers ai-posts from the inside; this
       # catches the other four and any new package added later.
+      #
+      # KNOWN BLIND SPOT, stated rather than left to be discovered: this matches
+      # `use App\...` at the start of a line only. It does NOT catch an inline
+      # `\App\Models\Post::class` or a class name passed as the string
+      # 'App\Models\Post'. Anchoring to `^use` is deliberate — several package
+      # docblocks legitimately NAME host classes when explaining why the package
+      # does not import them (see the geo migration and the ai-products rewrite
+      # services), and a looser pattern turns every one of those into a false
+      # failure. A manual sweep at this commit found 31 `App\` occurrences under
+      # packages/, and every one is intentional:
+      #   - the `PackageWiringTest` files, where `App\\` appears inside the
+      #     regex that enforces this very rule from inside each package;
+      #   - 2026_08_24_152906_convert_ai_polymorphic_types_to_aliases.php, which
+      #     names 'App\Models\AiDetection' and 'App\Models\AiHumanization' as
+      #     STRING LITERALS. Those are legacy `*_type` column VALUES written
+      #     before the morph map existed; the migration rewrites those rows to
+      #     aliases and must name them to find them. It is data, not a class
+      #     reference, and a fresh install simply matches no rows.
+      # So the anchored pattern and the real state of the tree agree today. If
+      # that stops being true, widen the pattern and allowlist the two cases
+      # above rather than deleting this step.
       - name: No host coupling
         run: |
           if grep -rn --include='*.php' '^use App\\' packages/*/src packages/*/config packages/*/database 2>/dev/null; then
