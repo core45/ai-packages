@@ -78,8 +78,6 @@ class AiCoreServiceProvider extends ServiceProvider
         // would hand out an empty registry to every worker after the first.
         $this->app->singleton(PromptKeyRegistry::class);
 
-        $this->registerOwnPromptKeys();
-
         // D1/A4: the package owns the LOOKUP LOGIC, the consumer supplies the
         // MAP — as config, not as code. A drop-in install registers its models
         // by editing `config/ai.php` and touching no provider. An app that has
@@ -134,6 +132,8 @@ class AiCoreServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->registerOwnPromptKeys();
+
         // D5: package migrations keep their original filenames so existing
         // installs (where they already ran under the host's database/migrations)
         // match their `migrations` ledger rows and never re-run; fresh installs
@@ -190,24 +190,24 @@ class AiCoreServiceProvider extends ServiceProvider
      */
     private function registerOwnPromptKeys(): void
     {
-        $this->app->resolving(PromptKeyRegistry::class, static function (PromptKeyRegistry $registry): void {
-            $registry->registerMany([
-                // Admin AI assistant.
-                'admin_system' => ['label' => 'Admin System Prompt', 'color' => 'info'],
-                'query_instructions' => ['label' => 'Query Instructions (data fetching)', 'color' => 'info'],
-                'action_instructions' => ['label' => 'Action Instructions (data modification)', 'color' => 'info'],
+        $registry = $this->app->make(PromptKeyRegistry::class);
 
-                // Customer AI assistant.
-                'customer_system' => ['label' => 'Customer System Prompt (authenticated)', 'color' => 'success'],
-                'anonymous_system' => ['label' => 'Anonymous System Prompt (public)', 'color' => 'success'],
+        $registry->registerMany([
+            // Admin AI assistant.
+            'admin_system' => ['label' => 'Admin System Prompt', 'color' => 'info'],
+            'query_instructions' => ['label' => 'Query Instructions (data fetching)', 'color' => 'info'],
+            'action_instructions' => ['label' => 'Action Instructions (data modification)', 'color' => 'info'],
 
-                // Generic content generation. No live surface routes these to a
-                // phasea template, hence no `template` — the form preview falls
-                // back to its placeholder, as it always did.
-                'content_generation' => ['label' => 'Content Generation Prompt', 'color' => 'warning'],
-                'seo_generation' => ['label' => 'SEO Generation Prompt', 'color' => 'warning'],
-            ]);
-        });
+            // Customer AI assistant.
+            'customer_system' => ['label' => 'Customer System Prompt (authenticated)', 'color' => 'success'],
+            'anonymous_system' => ['label' => 'Anonymous System Prompt (public)', 'color' => 'success'],
+
+            // Generic content generation. No live surface routes these to a
+            // phasea template, hence no `template` — the form preview falls
+            // back to its placeholder, as it always did.
+            'content_generation' => ['label' => 'Content Generation Prompt', 'color' => 'warning'],
+            'seo_generation' => ['label' => 'SEO Generation Prompt', 'color' => 'warning'],
+        ]);
     }
 
     /**
