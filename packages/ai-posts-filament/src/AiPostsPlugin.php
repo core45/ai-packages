@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Core45\AiPosts\Filament;
 
 use Core45\AiPosts\Filament\Pages\ManagePostPipeline;
+use Core45\AiPosts\Filament\Resources\BlogExternalLinks\BlogExternalLinkResource;
 use Core45\AiPosts\Filament\Resources\BlogPostPipelineRuns\BlogPostPipelineRunResource;
+use Core45\AiPosts\Filament\Resources\BlogTopicBatches\BlogTopicBatchResource;
+use Core45\AiPosts\Filament\Resources\BlogTopicProfiles\BlogTopicProfileResource;
+use Core45\AiPosts\Filament\Resources\ContentModules\ContentModuleResource;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
@@ -38,6 +42,10 @@ class AiPostsPlugin implements Plugin
     {
         $panel->resources([
             BlogPostPipelineRunResource::class,
+            BlogExternalLinkResource::class,
+            BlogTopicBatchResource::class,
+            BlogTopicProfileResource::class,
+            ContentModuleResource::class,
         ]);
 
         $panel->pages([

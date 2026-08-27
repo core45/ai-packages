@@ -211,12 +211,6 @@ parameters:
 			path: packages/ai-core/src/Models/AIConversationMessage.php
 
 		-
-			message: '#^Trait Core45\\AiCore\\Models\\Concerns\\HasAiDetection is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: packages/ai-core/src/Models/Concerns/HasAiDetection.php
-
-		-
 			message: '#^Call to an undefined method Illuminate\\Foundation\\Auth\\User\:\:notify\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -284,12 +278,6 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostPipelineRun\:\:\$primary_locale\.$#'
-			identifier: property.notFound
-			count: 2
-			path: packages/ai-posts/src/Jobs/BlogPipeline/AssemblePostJob.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
 			identifier: property.notFound
 			count: 2
 			path: packages/ai-posts/src/Jobs/BlogPipeline/AssemblePostJob.php
@@ -385,12 +373,6 @@ parameters:
 			path: packages/ai-posts/src/Jobs/BlogPipeline/FinalizePipelineRunJob.php
 
 		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Jobs/BlogPipeline/FinalizePipelineRunJob.php
-
-		-
 			message: '#^Parameter \#1 \$recipient of method Core45\\AiCore\\Contracts\\NotifiesOperator\:\:notifyOperator\(\) expects Illuminate\\Database\\Eloquent\\Model, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 1
@@ -433,28 +415,10 @@ parameters:
 			path: packages/ai-posts/src/Jobs/BlogPipeline/ResearchSynthesisJob.php
 
 		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$batch_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Jobs/BlogPipeline/ResearchSynthesisJob.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 2
-			path: packages/ai-posts/src/Jobs/BlogPipeline/ResearchSynthesisJob.php
-
-		-
 			message: '#^Parameter \#1 \$recipient of method Core45\\AiCore\\Contracts\\NotifiesOperator\:\:notifyOperator\(\) expects Illuminate\\Database\\Eloquent\\Model, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 1
 			path: packages/ai-posts/src/Jobs/BlogPipeline/ResearchSynthesisJob.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 2
-			path: packages/ai-posts/src/Jobs/BlogPipeline/StartPipelineJob.php
 
 		-
 			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogProfileLesson\:\:\$times_applied\.$#'
@@ -463,82 +427,10 @@ parameters:
 			path: packages/ai-posts/src/Jobs/BlogPipeline/TrackLessonEffectivenessJob.php
 
 		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Jobs/BlogTopics/CreateTopicFromUrlsJob.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$generate_faq\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogFaqJob.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogFaqJob.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$generate_images\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogImagesJob.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 2
-			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogImagesJob.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$generate_faq\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogPostJob.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$generate_images\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogPostJob.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$humanize_content\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogPostJob.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 2
-			path: packages/ai-posts/src/Jobs/BlogTopics/GenerateBlogPostJob.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 2
 			path: packages/ai-posts/src/Jobs/BlogTopics/PublishScheduledPostsJob.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 2
-			path: packages/ai-posts/src/Jobs/BlogTopics/ReEvaluateSeriesTopicsJob.php
-
-		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Core45\\AiPosts\\Models\\BlogTopicCandidate\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: packages/ai-posts/src/Jobs/BlogTopics/ReEvaluateSeriesTopicsJob.php
-
-		-
-			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,Core45\\AiPosts\\Models\\BlogTopicCandidate\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: method.unresolvableReturnType
-			count: 1
-			path: packages/ai-posts/src/Jobs/BlogTopics/ReEvaluateSeriesTopicsJob.php
 
 		-
 			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicProfile\:\:\$name\.$#'
@@ -554,18 +446,6 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostPipelineRun\:\:\$candidate_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Services/BlogPipeline/ModuleExecutor.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$batch_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Services/BlogPipeline/ModuleExecutor.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
 			identifier: property.notFound
 			count: 1
 			path: packages/ai-posts/src/Services/BlogPipeline/ModuleExecutor.php
@@ -598,30 +478,6 @@ parameters:
 			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogPostPipelineRun\:\:\$primary_locale\.$#'
 			identifier: property.notFound
 			count: 1
-			path: packages/ai-posts/src/Services/BlogPipeline/PipelineOrchestratorService.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$generate_faq\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Services/BlogPipeline/PipelineOrchestratorService.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$generate_images\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Services/BlogPipeline/PipelineOrchestratorService.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$humanize_content\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Services/BlogPipeline/PipelineOrchestratorService.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 4
 			path: packages/ai-posts/src/Services/BlogPipeline/PipelineOrchestratorService.php
 
 		-
@@ -661,18 +517,6 @@ parameters:
 			path: packages/ai-posts/src/Services/BlogPipeline/QualityGateService.php
 
 		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$batch_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Services/BlogTopics/BlogFaqWriterService.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$generate_faq\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Services/BlogTopics/BlogFaqWriterService.php
-
-		-
 			message: '#^Offset ''count'' on array\{enabled\: bool, count\: int\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -685,52 +529,10 @@ parameters:
 			path: packages/ai-posts/src/Services/BlogTopics/BlogFaqWriterService.php
 
 		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$batch_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Services/BlogTopics/BlogImageGeneratorService.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 3
-			path: packages/ai-posts/src/Services/BlogTopics/BlogImageGeneratorService.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$batch_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Services/BlogTopics/BlogPostWriterService.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$intent\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Services/BlogTopics/BlogPostWriterService.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$rationale\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Services/BlogTopics/BlogPostWriterService.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicCandidate\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Services/BlogTopics/BlogPostWriterService.php
-
-		-
 			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicProfile\:\:\$constraints\.$#'
 			identifier: property.notFound
 			count: 1
 			path: packages/ai-posts/src/Services/BlogTopics/ResearchService.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicProfile\:\:\$seed_keywords\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Services/BlogTopics/SiteProfileService.php
 
 		-
 			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicSource\:\:\$domain\.$#'
@@ -761,12 +563,6 @@ parameters:
 			identifier: method.unresolvableReturnType
 			count: 1
 			path: packages/ai-posts/src/Services/BlogTopics/TopicSynthesisService.php
-
-		-
-			message: '#^Access to an undefined property Core45\\AiPosts\\Models\\BlogTopicProfile\:\:\$seed_keywords\.$#'
-			identifier: property.notFound
-			count: 1
-			path: packages/ai-posts/src/Services/BlogTopics/UrlTopicService.php
 
 		-
 			message: '#^Access to an undefined property object\:\:\$negative_prompt\.$#'

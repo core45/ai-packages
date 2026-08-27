@@ -14,11 +14,25 @@ of its actions build directly on ai-core's Filament actions (see below).
 
 ## What you get
 
-One self-registering resource, for a model this package owns:
+Five self-registering resources, for models this package family owns. They
+appear with no wiring at all:
 
 | Resource | Model |
 | --- | --- |
 | Pipeline Runs (`BlogPostPipelineRunResource`) | `BlogPostPipelineRun` |
+| External Links (`BlogExternalLinkResource`) | `BlogExternalLink` |
+| Topic Batches (`BlogTopicBatchResource`) | `BlogTopicBatch` |
+| Topic Profiles (`BlogTopicProfileResource`) | `BlogTopicProfile` |
+| Content Modules (`ContentModuleResource`) | `ContentModule` |
+
+They land in one navigation group. `ai-posts.filament.navigation_group` names
+it; leaving it unset falls back to `ai.filament.navigation_group`, so an app
+that has already named an AI group gets the blog screens under it too.
+
+Set `ai-posts.filament.post_resource` to the host's own post resource class to
+restore the cross-links from these screens to it. `Post` is a host model reached
+through `ai.models`, so no package can ship a resource for it — an unset key
+drops those links rather than rendering dead ones.
 
 One standalone page, reachable via `ManagePostPipelineAction` rather than
 resource sub-navigation:

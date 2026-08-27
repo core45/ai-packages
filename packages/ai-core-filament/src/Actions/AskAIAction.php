@@ -3,11 +3,8 @@
 namespace Core45\AiCore\Filament\Actions;
 
 use Filament\Actions\Action;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Resources\Pages\EditRecord;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Model;
 
 class AskAIAction
 {
@@ -41,18 +38,15 @@ class AskAIAction
                 $modelType = null;
                 $modelId = null;
 
-                // Only the Filament resource pages that own a record declare
-                // getRecord(); no shared interface exposes it, so narrow via
-                // instanceof against the concrete page classes instead of a
-                // method_exists() check PHPStan cannot use to type the call.
-                if (
-                    $livewire instanceof CreateRecord
-                    || $livewire instanceof EditRecord
-                    || $livewire instanceof ViewRecord
-                    || $livewire instanceof ManageRelatedRecords
-                ) {
+                // No shared Filament interface exposes getRecord() (it's
+                // declared separately on each resource page class), so keep
+                // the method_exists() check to stay host-page-agnostic, but
+                // guard with is_object() first so PHPStan can type the call
+                // (the untyped $livewire closure param is class-string|object)
+                // and confirm the result is a real Model before using it.
+                if (is_object($livewire) && method_exists($livewire, 'getRecord')) {
                     $record = $livewire->getRecord();
-                    if ($record) {
+                    if ($record instanceof Model) {
                         $modelType = get_class($record);
                         $modelId = $record->getKey();
                     }

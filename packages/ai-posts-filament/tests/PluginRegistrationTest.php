@@ -13,7 +13,11 @@ use Core45\AiPosts\Filament\Actions\ManagePostPipelineAction;
 use Core45\AiPosts\Filament\AiPostsFilamentServiceProvider;
 use Core45\AiPosts\Filament\AiPostsPlugin;
 use Core45\AiPosts\Filament\Pages\ManagePostPipeline;
+use Core45\AiPosts\Filament\Resources\BlogExternalLinks\BlogExternalLinkResource;
 use Core45\AiPosts\Filament\Resources\BlogPostPipelineRuns\BlogPostPipelineRunResource;
+use Core45\AiPosts\Filament\Resources\BlogTopicBatches\BlogTopicBatchResource;
+use Core45\AiPosts\Filament\Resources\BlogTopicProfiles\BlogTopicProfileResource;
+use Core45\AiPosts\Filament\Resources\ContentModules\ContentModuleResource;
 use Filament\Panel;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -50,6 +54,10 @@ class PluginRegistrationTest extends TestCase
         AiPostsPlugin::make()->register($panel);
 
         $this->assertContains(BlogPostPipelineRunResource::class, $panel->getResources());
+        $this->assertContains(BlogExternalLinkResource::class, $panel->getResources());
+        $this->assertContains(BlogTopicBatchResource::class, $panel->getResources());
+        $this->assertContains(BlogTopicProfileResource::class, $panel->getResources());
+        $this->assertContains(ContentModuleResource::class, $panel->getResources());
         $this->assertContains(ManagePostPipeline::class, $panel->getPages());
     }
 

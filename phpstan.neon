@@ -41,19 +41,22 @@ parameters:
                 - packages/ai-posts-filament/src/Concerns
 
         # Larastan resolves `view-string` against the application's view path.
-        # These views are package-namespaced (`ai-core::…`) and that namespace is
-        # registered at runtime by AiCoreFilamentServiceProvider::boot(), so
-        # Larastan cannot see them however the call is written — the names here
-        # are already plain literals.
+        # These views are package-namespaced (`ai-core::…`, `ai-posts::…`) and
+        # those namespaces are registered at runtime by each UI package's
+        # provider, so Larastan cannot see them however the call is written — the
+        # names here are already plain literals.
         #
-        # Suppressed only because the check is replaced, not dropped:
-        # PackagedViewsTest asserts every one of these views actually resolves,
-        # which is the thing the static check was standing in for.
+        # Suppressed only because the check is replaced, not dropped. Each UI
+        # package has a test asserting every one of its views actually resolves,
+        # which is the thing the static check was standing in for:
+        # ai-core-filament's PackagedViewsTest and ai-posts-filament's
+        # PackagedResourcesTest.
         -
             identifier: argument.type
             message: '#Parameter \#1 \$view of function view expects view-string\|null, string given\.#'
             paths:
                 - packages/ai-core-filament/src/Actions
+                - packages/ai-posts-filament/src/Resources
 
     excludePaths:
         analyseAndScan:

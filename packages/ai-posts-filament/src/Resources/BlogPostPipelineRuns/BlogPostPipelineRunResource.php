@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core45\AiPosts\Filament\Resources\BlogPostPipelineRuns;
 
 use BackedEnum;
+use Core45\AiPosts\Filament\Concerns\ResolvesNavigationGroup;
 use Core45\AiPosts\Filament\Resources\BlogPostPipelineRuns\Pages\ListBlogPostPipelineRuns;
 use Core45\AiPosts\Filament\Resources\BlogPostPipelineRuns\Pages\ViewBlogPostPipelineRun;
 use Core45\AiPosts\Filament\Resources\BlogPostPipelineRuns\Tables\BlogPostPipelineRunsTable;
@@ -16,6 +17,8 @@ use UnitEnum;
 
 class BlogPostPipelineRunResource extends Resource
 {
+    use ResolvesNavigationGroup;
+
     protected static ?string $model = BlogPostPipelineRun::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog;
@@ -29,7 +32,7 @@ class BlogPostPipelineRunResource extends Resource
      */
     public static function getNavigationGroup(): string|UnitEnum|null
     {
-        return config('blog-pipeline.navigation_group', 'Blog Topics');
+        return self::resolveNavigationGroup();
     }
 
     public static function getNavigationLabel(): string

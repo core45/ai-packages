@@ -25,6 +25,22 @@ class AiPostsFilamentServiceProvider extends ServiceProvider
         $this->registerPlugin();
     }
 
+    public function boot(): void
+    {
+        // The blade files behind the pipeline page and the two detail modals.
+        // They live here rather than in `ai-posts` because every one is rendered
+        // by a Filament class, and a package with no UI has no business shipping
+        // Filament views.
+        //
+        // Two of them were unnamespaced host views before the move
+        // (`filament.blog-topics.candidate-details` and
+        // `filament.blog-pipeline.lesson-details`). Those resolved only because
+        // the one application that used them happened to have the files in its
+        // own `resources/views`; anywhere else the modal threw at the moment a
+        // user opened it.
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'ai-posts');
+    }
+
     /**
      * Self-register the plugin on the consuming app's panels.
      *
