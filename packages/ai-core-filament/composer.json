@@ -2,7 +2,6 @@
     "name": "core45/ai-core-filament",
     "description": "Filament UI for core45/ai-core: knowledge, knowledge gap/conflict and prompt-override resources, plus the Filament implementation of the operator notification seam.",
     "type": "library",
-    "version": "0.1.0",
     "license": "MIT",
     "repositories": [
         {

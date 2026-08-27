@@ -2,7 +2,6 @@
     "name": "core45/ai-chat",
     "description": "Customer chat transport for the phaseb AI package family: CustomerAIService, guest stream token brokering, Livewire chat panel, SSE proxy, conversation persistence.",
     "type": "library",
-    "version": "0.1.0",
     "license": "MIT",
     "repositories": [
         {

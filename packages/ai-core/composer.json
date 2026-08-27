@@ -2,7 +2,6 @@
     "name": "core45/ai-core",
     "description": "Shared AI core for the phaseb AI package family: remote AI client, DTOs, contracts, exceptions, usage logging, circuit breaker, model registry, knowledge/learning system, async operations, prompt overrides.",
     "type": "library",
-    "version": "0.1.0",
     "license": "MIT",
     "require": {
         "php": "^8.4",
