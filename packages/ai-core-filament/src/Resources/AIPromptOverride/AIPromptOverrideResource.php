@@ -40,12 +40,16 @@ class AIPromptOverrideResource extends Resource
      * The flag alone used to be the whole check, which meant the Shield
      * permissions for this resource were never consulted: any user who could
      * reach the panel at all could open it. `parent::canAccess()` delegates to
-     * `canViewAny()`, which resolves the policy that now ships in the package's
-     * own namespace so Laravel's auto-discovery can find it.
+     * `canViewAny()`, which resolves the policy that ships in the package's own
+     * namespace so Laravel's auto-discovery can find it.
      *
      * Filament allows when no policy is discoverable, so a consumer app that
      * ships neither policies nor permissions is unaffected: the flag remains
      * the only gate for them.
+     *
+     * Re-applied when 00bb's Filament tree was merged in. That branch had
+     * reverted this to the flag-only check, which would have silently dropped
+     * the permission gate on all four resources.
      */
     public static function canAccess(): bool
     {

@@ -8,6 +8,7 @@
     },
     "require-dev": {
         "astrotomic/laravel-translatable": "^11.17",
+        "doriiaan/filament-astrotomic": "^1.2",
         "filament/filament": "^5.7.6",
         "larastan/larastan": "^3.10.0",
         "laravel/framework": "^13.26.1",
@@ -31,6 +32,7 @@
             "Core45\\AiCore\\Filament\\": "packages/ai-core-filament/src/",
             "Core45\\AiPosts\\": "packages/ai-posts/src/",
             "Core45\\AiPosts\\Database\\Factories\\": "packages/ai-posts/database/factories/",
+            "Core45\\AiPosts\\Filament\\": "packages/ai-posts-filament/src/",
             "Core45\\AiProducts\\": "packages/ai-products/src/",
             "Core45\\AiWebinars\\": "packages/ai-webinars/src/"
         }
@@ -40,6 +42,7 @@
             "Core45\\AiChat\\Tests\\": "packages/ai-chat/tests/",
             "Core45\\AiCore\\Filament\\Tests\\": "packages/ai-core-filament/tests/",
             "Core45\\AiCore\\Tests\\": "packages/ai-core/tests/",
+            "Core45\\AiPosts\\Filament\\Tests\\": "packages/ai-posts-filament/tests/",
             "Core45\\AiPosts\\Tests\\": "packages/ai-posts/tests/",
             "Core45\\AiProducts\\Tests\\": "packages/ai-products/tests/",
             "Core45\\AiWebinars\\Tests\\": "packages/ai-webinars/tests/"

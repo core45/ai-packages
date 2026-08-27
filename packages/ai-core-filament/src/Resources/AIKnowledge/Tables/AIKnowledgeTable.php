@@ -22,21 +22,21 @@ class AIKnowledgeTable
             ->columns([
                 TextColumn::make('id')->label('ID')->searchable()->sortable(),
                 IconColumn::make('enabled')
-                    ->label(__('ai_knowledge.field.enabled'))
+                    ->label(__('ai-core::ai_knowledge.field.enabled'))
                     ->boolean()
                     ->sortable(),
 
                 TextColumn::make('type')
-                    ->label(__('ai_knowledge.field.type'))
+                    ->label(__('ai-core::ai_knowledge.field.type'))
                     ->badge()
                     ->formatStateUsing(fn (AIKnowledgeType $state): string => $state->label())
                     ->color(fn (AIKnowledgeType $state): string => $state->color())
                     ->sortable(),
 
                 TextColumn::make('tier')
-                    ->label(__('ai_knowledge.field.tier'))
+                    ->label(__('ai-core::ai_knowledge.field.tier'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => __("ai_knowledge.tier.{$state}"))
+                    ->formatStateUsing(fn (string $state): string => __("ai-core::ai_knowledge.tier.{$state}"))
                     ->color(fn (string $state): string => match ($state) {
                         'critical' => 'danger',
                         'contextual' => 'gray',
@@ -45,9 +45,9 @@ class AIKnowledgeTable
                     ->sortable(),
 
                 TextColumn::make('audience')
-                    ->label(__('ai_knowledge.field.audience'))
+                    ->label(__('ai-core::ai_knowledge.field.audience'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => __("ai_knowledge.audience.{$state}"))
+                    ->formatStateUsing(fn (string $state): string => __("ai-core::ai_knowledge.audience.{$state}"))
                     ->color(fn (string $state): string => match ($state) {
                         'public' => 'success',
                         'customer' => 'info',
@@ -57,30 +57,30 @@ class AIKnowledgeTable
                     ->sortable(),
 
                 TextColumn::make('title')
-                    ->label(__('ai_knowledge.field.title'))
+                    ->label(__('ai-core::ai_knowledge.field.title'))
                     ->searchable()
                     ->sortable()
                     ->limit(50),
 
                 TextColumn::make('content')
-                    ->label(__('ai_knowledge.field.content'))
+                    ->label(__('ai-core::ai_knowledge.field.content'))
                     ->searchable()
                     ->limit(60)
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('use_count')
-                    ->label(__('ai_knowledge.field.use_count'))
+                    ->label(__('ai-core::ai_knowledge.field.use_count'))
                     ->sortable()
                     ->alignCenter(),
 
                 TextColumn::make('last_used_at')
-                    ->label(__('ai_knowledge.field.last_used_at'))
+                    ->label(__('ai-core::ai_knowledge.field.last_used_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('creator.name')
-                    ->label(__('ai_knowledge.field.created_by'))
+                    ->label(__('ai-core::ai_knowledge.field.created_by'))
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
@@ -91,19 +91,19 @@ class AIKnowledgeTable
             ])
             ->filters([
                 SelectFilter::make('type')
-                    ->label(__('ai_knowledge.field.type'))
+                    ->label(__('ai-core::ai_knowledge.field.type'))
                     ->options(AILearnedKnowledge::getTypeOptions()),
 
                 SelectFilter::make('tier')
-                    ->label(__('ai_knowledge.field.tier'))
+                    ->label(__('ai-core::ai_knowledge.field.tier'))
                     ->options(AILearnedKnowledge::getTierOptions()),
 
                 SelectFilter::make('audience')
-                    ->label(__('ai_knowledge.field.audience'))
+                    ->label(__('ai-core::ai_knowledge.field.audience'))
                     ->options(AILearnedKnowledge::getAudienceOptions()),
 
                 SelectFilter::make('enabled')
-                    ->label(__('ai_knowledge.field.enabled'))
+                    ->label(__('ai-core::ai_knowledge.field.enabled'))
                     ->options([
                         '1' => __('Yes'),
                         '0' => __('No'),

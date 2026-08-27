@@ -23,7 +23,7 @@ class KnowledgeGapsStatsWidget extends StatsOverviewWidget
         });
 
         return [
-            Stat::make(__('ai_knowledge.gap_status.open'), $this->formatCount($stats['open']))
+            Stat::make(__('ai-core::ai_knowledge.gap_status.open'), $this->formatCount($stats['open']))
                 ->description(__('Questions needing answers'))
                 ->color('warning')
                 ->icon(Heroicon::OutlinedQuestionMarkCircle),
@@ -33,7 +33,7 @@ class KnowledgeGapsStatsWidget extends StatsOverviewWidget
                 ->color('danger')
                 ->icon(Heroicon::OutlinedExclamationTriangle),
 
-            Stat::make(__('ai_knowledge.gap_status.resolved'), $this->formatCount($stats['resolved']))
+            Stat::make(__('ai-core::ai_knowledge.gap_status.resolved'), $this->formatCount($stats['resolved']))
                 ->description(__('Gaps with answers created'))
                 ->color('success')
                 ->icon(Heroicon::OutlinedCheckCircle),
@@ -48,16 +48,16 @@ class KnowledgeGapsStatsWidget extends StatsOverviewWidget
     /**
      * Format a count for display.
      *
-     * These four calls used to be the host's global `format_number()` helper,
-     * which is defined in the consuming app rather than in any package. A global
-     * function is host coupling that the `use App\` check cannot see — it is not
-     * an import — so it survived every gate and would have fataled with "call to
-     * undefined function" the first time this widget rendered in a fresh app.
+     * Neither of the two versions this file has had was right for a package.
+     * The original called the host's global `format_number()`, which is defined
+     * in the consuming app — coupling no import-based check can see, and a
+     * "call to undefined function" the first time the widget rendered anywhere
+     * else. 00bb replaced it with `Number::format()`, which resolves separators
+     * from the intl locale and so renders "26.083" under es_ES, against this
+     * project's European convention of a space for thousands.
      *
-     * The separators are read from the same config keys the host helper uses, so
-     * an app that configures them keeps its formatting, and one that does not
-     * gets the European default of a space for thousands and a comma for
-     * decimals.
+     * Reading the same config keys the host helper reads keeps an app that
+     * configures them, and gives everyone else the intended default.
      */
     private function formatCount(int|float $count): string
     {

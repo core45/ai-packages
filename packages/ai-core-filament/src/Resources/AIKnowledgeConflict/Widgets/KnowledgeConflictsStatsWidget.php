@@ -35,23 +35,23 @@ class KnowledgeConflictsStatsWidget extends StatsOverviewWidget
         });
 
         return [
-            Stat::make(__('ai_knowledge.conflict_stat.unresolved'), number_format($stats['unresolved'], 0, ',', ' '))
-                ->description(__('ai_knowledge.conflict_stat.unresolved_description'))
+            Stat::make(__('ai-core::ai_knowledge.conflict_stat.unresolved'), number_format($stats['unresolved'], 0, ',', ' '))
+                ->description(__('ai-core::ai_knowledge.conflict_stat.unresolved_description'))
                 ->color($stats['unresolved'] > 0 ? 'danger' : 'success')
                 ->icon(Heroicon::OutlinedExclamationTriangle),
 
-            Stat::make(__('ai_knowledge.conflict_stat.contradictions'), number_format($stats['contradictions'], 0, ',', ' '))
-                ->description(__('ai_knowledge.conflict_stat.contradictions_description'))
+            Stat::make(__('ai-core::ai_knowledge.conflict_stat.contradictions'), number_format($stats['contradictions'], 0, ',', ' '))
+                ->description(__('ai-core::ai_knowledge.conflict_stat.contradictions_description'))
                 ->color($stats['contradictions'] > 0 ? 'danger' : 'gray')
                 ->icon(Heroicon::OutlinedBolt),
 
-            Stat::make(__('ai_knowledge.conflict_stat.resolved'), number_format($stats['resolved'], 0, ',', ' '))
-                ->description(__('ai_knowledge.conflict_stat.resolved_description'))
+            Stat::make(__('ai-core::ai_knowledge.conflict_stat.resolved'), number_format($stats['resolved'], 0, ',', ' '))
+                ->description(__('ai-core::ai_knowledge.conflict_stat.resolved_description'))
                 ->color('success')
                 ->icon(Heroicon::OutlinedCheckCircle),
 
-            Stat::make(__('ai_knowledge.conflict_stat.total'), number_format($stats['total'], 0, ',', ' '))
-                ->description(__('ai_knowledge.conflict_stat.total_description'))
+            Stat::make(__('ai-core::ai_knowledge.conflict_stat.total'), number_format($stats['total'], 0, ',', ' '))
+                ->description(__('ai-core::ai_knowledge.conflict_stat.total_description'))
                 ->color('gray')
                 ->icon(Heroicon::OutlinedChartBar),
         ];

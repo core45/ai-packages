@@ -209,6 +209,36 @@ class AIContentBatch extends Model
     }
 
     /**
+     * Claim the batch for finalization and hand it to the consumer's finalize
+     * job, if one is configured.
+     *
+     * The finalize job is consumer-owned — it edits host records and notifies
+     * host users — so its class comes from config (D6) rather than an import,
+     * and the package ships no default. An app with no finalize flow simply
+     * completes the batch.
+     *
+     * This exists because the claim and the dispatch had drifted apart: the
+     * circuit-breaker abort path did both, while the per-item completion path
+     * claimed the batch and dispatched nothing. A batch that finished normally
+     * therefore reached `finalizing` and stopped there — no notification, no
+     * error, just a status nobody ever advanced.
+     */
+    public function finalizeIfClaimed(): bool
+    {
+        if (!$this->claimForFinalization()) {
+            return false;
+        }
+
+        $finalizeJob = config('ai.finalize_job');
+
+        if (is_string($finalizeJob) && $finalizeJob !== '' && class_exists($finalizeJob)) {
+            $finalizeJob::dispatch($this);
+        }
+
+        return true;
+    }
+
+    /**
      * Atomic claim for notification — only one caller wins.
      */
     public function claimForNotification(): bool
@@ -249,17 +279,7 @@ class AIContentBatch extends Model
             $this->refresh();
         });
 
-        if ($this->claimForFinalization()) {
-            // The finalize job is consumer-owned (it edits host resources and
-            // notifies host users); its class comes from config (D6). The
-            // package ships no default, so an app without a finalize flow
-            // simply completes the batch without dispatching.
-            $finalizeJob = config('ai.finalize_job');
-
-            if (is_string($finalizeJob) && $finalizeJob !== '') {
-                $finalizeJob::dispatch($this);
-            }
-        }
+        $this->finalizeIfClaimed();
     }
 
     public function getSuccessRate(): float

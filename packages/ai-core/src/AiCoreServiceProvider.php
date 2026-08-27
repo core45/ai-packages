@@ -80,6 +80,16 @@ class AiCoreServiceProvider extends ServiceProvider
         // discover them here for the first time.
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
+        // The package's own strings, reachable as `__('ai-core::…')`. Laravel
+        // keeps view and translation namespaces in separate registries, so
+        // `ai-core-filament` registering the *view* namespace `ai-core` for the
+        // blade files its form components render does not collide with this.
+        //
+        // Translations stay in the domain package even though only the Filament
+        // resources read them today: they are plain strings, they need no panel,
+        // and an app on a different UI can reuse them.
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'ai-core');
+
         if ($this->app->runningInConsole()) {
             // D6/D11: `mergeConfigFrom` above already supplies working defaults,
             // so publishing is only for apps that want to edit the file. This

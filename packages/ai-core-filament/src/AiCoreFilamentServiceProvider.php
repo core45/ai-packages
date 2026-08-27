@@ -31,6 +31,21 @@ class AiCoreFilamentServiceProvider extends ServiceProvider
         $this->registerPlugin();
     }
 
+    public function boot(): void
+    {
+        // The blade files behind the SEO and analysis form components, reachable
+        // as `view('ai-core::forms.components.…')`. They moved here with the
+        // classes that render them: every one is referenced only by a Filament
+        // component, so shipping them from the domain package would put blade
+        // views in a package that has no UI.
+        //
+        // The namespace stays `ai-core` so no view reference needed rewriting.
+        // Laravel resolves view and translation namespaces from separate
+        // registries, so this coexists with `ai-core`'s translation namespace of
+        // the same name.
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'ai-core');
+    }
+
     /**
      * Self-register the plugin on the consuming app's panels.
      *

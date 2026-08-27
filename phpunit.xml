@@ -24,6 +24,9 @@
         <testsuite name="ai-posts">
             <directory>packages/ai-posts/tests</directory>
         </testsuite>
+        <testsuite name="ai-posts-filament">
+            <directory>packages/ai-posts-filament/tests</directory>
+        </testsuite>
         <testsuite name="ai-chat">
             <directory>packages/ai-chat/tests</directory>
         </testsuite>
@@ -40,6 +43,7 @@
             <directory>packages/ai-core/src</directory>
             <directory>packages/ai-core-filament/src</directory>
             <directory>packages/ai-posts/src</directory>
+            <directory>packages/ai-posts-filament/src</directory>
             <directory>packages/ai-chat/src</directory>
             <directory>packages/ai-products/src</directory>
             <directory>packages/ai-webinars/src</directory>

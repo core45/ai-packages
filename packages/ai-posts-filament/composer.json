@@ -1,0 +1,39 @@
+{
+    "name": "core45/ai-posts-filament",
+    "description": "Filament UI for core45/ai-posts: the blog post pipeline resource, management page, and content-authoring actions.",
+    "type": "library",
+    "version": "0.1.0",
+    "license": "MIT",
+    "require": {
+        "php": "^8.4",
+        "core45/ai-core-filament": "^0.1",
+        "core45/ai-posts": "^0.1",
+        "filament/filament": "^5.7",
+        "laravel/framework": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Core45\\AiPosts\\Filament\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Core45\\AiPosts\\Filament\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Core45\\AiPosts\\Filament\\AiPostsFilamentServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

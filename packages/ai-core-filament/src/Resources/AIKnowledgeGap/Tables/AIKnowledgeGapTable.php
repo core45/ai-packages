@@ -29,9 +29,9 @@ class AIKnowledgeGapTable
         return $table
             ->columns([
                 TextColumn::make('status')
-                    ->label(__('ai_knowledge.gap_field.status'))
+                    ->label(__('ai-core::ai_knowledge.gap_field.status'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => __("ai_knowledge.gap_status.{$state}"))
+                    ->formatStateUsing(fn (string $state): string => __("ai-core::ai_knowledge.gap_status.{$state}"))
                     ->color(fn (string $state): string => match ($state) {
                         'open' => 'warning',
                         'resolved' => 'success',
@@ -41,7 +41,7 @@ class AIKnowledgeGapTable
                     ->sortable(),
 
                 TextColumn::make('occurrence_count')
-                    ->label(__('ai_knowledge.gap_field.occurrence_count'))
+                    ->label(__('ai-core::ai_knowledge.gap_field.occurrence_count'))
                     ->sortable()
                     ->alignCenter()
                     ->badge()
@@ -52,16 +52,16 @@ class AIKnowledgeGapTable
                     }),
 
                 TextColumn::make('question')
-                    ->label(__('ai_knowledge.gap_field.question'))
+                    ->label(__('ai-core::ai_knowledge.gap_field.question'))
                     ->searchable()
                     ->limit(80)
                     ->wrap()
                     ->tooltip(fn (AIKnowledgeGap $record): string => $record->question),
 
                 TextColumn::make('audience')
-                    ->label(__('ai_knowledge.field.audience'))
+                    ->label(__('ai-core::ai_knowledge.field.audience'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => __("ai_knowledge.audience.{$state}"))
+                    ->formatStateUsing(fn (string $state): string => __("ai-core::ai_knowledge.audience.{$state}"))
                     ->color(fn (string $state): string => match ($state) {
                         'public' => 'success',
                         'customer' => 'info',
@@ -71,7 +71,7 @@ class AIKnowledgeGapTable
                     ->sortable(),
 
                 TextColumn::make('confidence_score')
-                    ->label(__('ai_knowledge.gap_field.confidence_score'))
+                    ->label(__('ai-core::ai_knowledge.gap_field.confidence_score'))
                     ->formatStateUsing(fn ($state): string => number_format((float) $state * 100).'%')
                     ->sortable()
                     ->color(fn ($state): string => match (true) {
@@ -81,69 +81,69 @@ class AIKnowledgeGapTable
                     }),
 
                 TextColumn::make('last_occurred_at')
-                    ->label(__('ai_knowledge.gap_field.last_occurred_at'))
+                    ->label(__('ai-core::ai_knowledge.gap_field.last_occurred_at'))
                     ->dateTime()
                     ->sortable()
                     ->since(),
 
                 TextColumn::make('ai_response')
-                    ->label(__('ai_knowledge.gap_field.ai_response'))
+                    ->label(__('ai-core::ai_knowledge.gap_field.ai_response'))
                     ->limit(60)
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('resolver.name')
-                    ->label(__('ai_knowledge.gap_field.resolved_by'))
+                    ->label(__('ai-core::ai_knowledge.gap_field.resolved_by'))
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('resolved_at')
-                    ->label(__('ai_knowledge.gap_field.resolved_at'))
+                    ->label(__('ai-core::ai_knowledge.gap_field.resolved_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->label(__('ai_knowledge.gap_field.status'))
+                    ->label(__('ai-core::ai_knowledge.gap_field.status'))
                     ->options(AIKnowledgeGap::getStatusOptions())
                     ->default('open'),
 
                 SelectFilter::make('audience')
-                    ->label(__('ai_knowledge.field.audience'))
+                    ->label(__('ai-core::ai_knowledge.field.audience'))
                     ->options(AIKnowledgeGap::getAudienceOptions()),
             ])
             ->recordActions([
                 Action::make('resolve')
-                    ->label(__('ai_knowledge.gap_action.resolve'))
+                    ->label(__('ai-core::ai_knowledge.gap_action.resolve'))
                     ->icon(Heroicon::OutlinedPlusCircle)
                     ->color('success')
                     ->visible(fn (AIKnowledgeGap $record): bool => $record->isOpen())
                     ->schema([
                         TextInput::make('title')
-                            ->label(__('ai_knowledge.field.title'))
+                            ->label(__('ai-core::ai_knowledge.field.title'))
                             ->required()
                             ->maxLength(255)
                             ->default(fn (AIKnowledgeGap $record): string => self::generateTitleFromQuestion($record->question)),
 
                         Textarea::make('content')
-                            ->label(__('ai_knowledge.field.content'))
+                            ->label(__('ai-core::ai_knowledge.field.content'))
                             ->required()
                             ->rows(4)
                             ->helperText('Enter the answer to this question'),
 
                         Select::make('type')
-                            ->label(__('ai_knowledge.field.type'))
+                            ->label(__('ai-core::ai_knowledge.field.type'))
                             ->options(AILearnedKnowledge::getTypeOptions())
                             ->default('faq')
                             ->required(),
 
                         Select::make('audience')
-                            ->label(__('ai_knowledge.field.audience'))
+                            ->label(__('ai-core::ai_knowledge.field.audience'))
                             ->options(AILearnedKnowledge::getAudienceOptions())
                             ->default(fn (AIKnowledgeGap $record): string => $record->audience)
                             ->required(),
 
                         Select::make('tier')
-                            ->label(__('ai_knowledge.field.tier'))
+                            ->label(__('ai-core::ai_knowledge.field.tier'))
                             ->options(AILearnedKnowledge::getTierOptions())
                             ->default('contextual')
                             ->required(),
@@ -174,7 +174,7 @@ class AIKnowledgeGapTable
                     }),
 
                 Action::make('ignore')
-                    ->label(__('ai_knowledge.gap_action.ignore'))
+                    ->label(__('ai-core::ai_knowledge.gap_action.ignore'))
                     ->icon(Heroicon::OutlinedXCircle)
                     ->color('gray')
                     ->visible(fn (AIKnowledgeGap $record): bool => $record->isOpen())
@@ -193,7 +193,7 @@ class AIKnowledgeGapTable
                     }),
 
                 Action::make('view_knowledge')
-                    ->label(__('ai_knowledge.gap_field.resolution_knowledge'))
+                    ->label(__('ai-core::ai_knowledge.gap_field.resolution_knowledge'))
                     ->icon(Heroicon::OutlinedLightBulb)
                     ->color('info')
                     ->visible(fn (AIKnowledgeGap $record): bool => $record->isResolved() && $record->resolution_knowledge_id !== null)

@@ -25,7 +25,13 @@ Plus **UI** packages, which do:
 
 | Package | What it provides | Requires |
 | --- | --- | --- |
-| `core45/ai-core-filament` | Filament resources for AI knowledge, knowledge conflicts and gaps, and prompt overrides; Filament delivery for operator notifications | `core45/ai-core`, `filament/filament` |
+| `core45/ai-core-filament` | Resources for AI knowledge, conflicts, gaps and prompt overrides; the generic AI actions (ask, translate, rewrite SEO, AI-detection, similarity audit); the SEO/GEO form components; Filament delivery for operator notifications | `core45/ai-core`, `filament/filament` |
+| `core45/ai-posts-filament` | Blog pipeline UI: the pipeline-run resource, the Manage Post Pipeline page, and the post actions (AI rewrite, photo generation, internal-link enrichment) | `core45/ai-posts`, `core45/ai-core-filament`, `filament/filament` |
+
+`ai-posts-filament` requires `ai-core-filament` because its post actions are built
+from the generic ones. That is the whole mechanism at work: install the blog UI
+and you get the AI core UI with it, and you still get no product or webinar UI,
+because nothing asked for it.
 
 Four domain packages depend on `ai-core`; `ai-core` depends on none of them.
 That one-to-four fan-out is why these live in a single repository: a change to
@@ -48,6 +54,12 @@ Two consequences worth knowing before writing code here:
 - **Operator notifications go through `NotifiesOperator`** (in `ai-core`), not
   through `Filament\Notifications\Notification`. `ai-core` binds a logging
   implementation; `ai-core-filament` binds the real one.
+- **Package-owned models get shippable UI; host-owned models get building
+  blocks.** `ai-core` and `ai-posts` own their models, so their resources
+  self-register and appear with zero wiring. `Product` and `Webinar` are host
+  models supplied through `ai.models`, so no package can ship a `ProductResource`
+  — it cannot know the table or the field names. What ships instead is a generic
+  action the host adds to its own resource in one line.
 - **Enums do not implement `HasLabel` / `HasColor`.** Those interfaces come from
   `filament/support`, which depends on Livewire; requiring it would put Filament
   into every domain package, `ai-chat` included. The enums keep plain
@@ -87,7 +99,7 @@ vendor/bin/pint              # formatting
 vendor/bin/phpstan analyse   # static analysis
 ```
 
-The root `autoload` block maps all five packages, so tests run without path
+The root `autoload` block maps all seven packages, so tests run without path
 repositories.
 
 ## Consuming from a private repository

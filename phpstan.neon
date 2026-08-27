@@ -14,9 +14,46 @@ parameters:
         - packages/ai-core/src
         - packages/ai-core-filament/src
         - packages/ai-posts/src
+        - packages/ai-posts-filament/src
         - packages/ai-chat/src
         - packages/ai-products/src
         - packages/ai-webinars/src
+
+    # Scanned for symbols but not analysed. Factories are referenced from
+    # `@use HasFactory<...>` docblocks and `newFactory()` return types, so
+    # without this every model that declares one reports its own factory as an
+    # unknown class — errors that describe nothing but this config gap.
+    scanDirectories:
+        - packages/ai-core/database/factories
+        - packages/ai-posts/database/factories
+
+    ignoreErrors:
+        # These traits are the package's public surface, not internal helpers:
+        # a consuming app applies them to ITS OWN models and Filament classes.
+        # Zero uses inside the package is the intended state, permanently — so
+        # this is an ignore rule rather than a baseline entry, which would imply
+        # debt someone should one day pay off.
+        -
+            identifier: trait.unused
+            paths:
+                - packages/ai-core/src/Models/Concerns
+                - packages/ai-core-filament/src/Concerns
+                - packages/ai-posts-filament/src/Concerns
+
+        # Larastan resolves `view-string` against the application's view path.
+        # These views are package-namespaced (`ai-core::…`) and that namespace is
+        # registered at runtime by AiCoreFilamentServiceProvider::boot(), so
+        # Larastan cannot see them however the call is written — the names here
+        # are already plain literals.
+        #
+        # Suppressed only because the check is replaced, not dropped:
+        # PackagedViewsTest asserts every one of these views actually resolves,
+        # which is the thing the static check was standing in for.
+        -
+            identifier: argument.type
+            message: '#Parameter \#1 \$view of function view expects view-string\|null, string given\.#'
+            paths:
+                - packages/ai-core-filament/src/Actions
 
     excludePaths:
         analyseAndScan:
