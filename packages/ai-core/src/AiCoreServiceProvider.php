@@ -225,8 +225,7 @@ class AiCoreServiceProvider extends ServiceProvider
         $this->app->bindIf(ProvidesMandatoryWords::class, NullMandatoryWordsProvider::class);
         $this->app->bindIf(ObservesAiContracts::class, NullContractObserver::class);
 
-        // `GeneratesContentMedia` and `IssuesGuestStreamTokens` are deliberately
-        // NOT bound here.
+        // Two seams get no usable default, for opposite reasons.
         //
         // `GeneratesContentMedia` is resolved from `ai-posts` and `ai-products`
         // only inside `processMediaGeneration()`, itself gated by
@@ -239,7 +238,13 @@ class AiCoreServiceProvider extends ServiceProvider
         // has an implementation, matching the `ChecksContentSimilarity` opt-in
         // reasoning above.
         //
-        // `IssuesGuestStreamTokens` IS reached unconditionally on a real path —
+        // `IssuesGuestStreamTokens` IS bound, above, but to
+        // `UnconfiguredGuestStreamTokenIssuer`, which THROWS. That is not a
+        // null object and is not meant to be usable; it exists only to replace
+        // the container's `Target [...] is not instantiable` with a sentence
+        // naming the feature and what to bind.
+        //
+        // It has to throw, because it IS reached unconditionally on a real path —
         // `RemoteAiClient::customerChat()` and `::streamCustomerChat()` resolve
         // it whenever the caller is a guest identity, with no `bound()` check
         // and no try/catch — but it has no sensible no-op. Token issuance is

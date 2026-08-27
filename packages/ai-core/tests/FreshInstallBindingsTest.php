@@ -14,6 +14,7 @@ use Core45\AiCore\Contracts\ObservesAiContracts;
 use Core45\AiCore\Contracts\ProvidesMandatoryWords;
 use Core45\AiCore\Contracts\StoresFocusKeyphrases;
 use Core45\AiCore\Services\ContentSimilarityService;
+use Core45\AiCore\Services\ImageGeneration\FalAiService;
 use Core45\AiCore\Support\Chat\UnconfiguredGuestStreamTokenIssuer;
 use Core45\AiCore\Support\Content\NullMandatoryWordsProvider;
 use Core45\AiCore\Support\Geo\NullCitationEnricher;
@@ -22,7 +23,6 @@ use Core45\AiCore\Support\Observability\NullContractObserver;
 use Core45\AiCore\Support\Seo\NullFocusKeyphraseStore;
 use Core45\AiCore\Support\Slugs\StrSlugGenerator;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Application;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 
@@ -68,7 +68,11 @@ class FreshInstallBindingsTest extends TestCase
         $this->assertInstanceOf(NullFocusKeyphraseStore::class, app(StoresFocusKeyphrases::class));
         $this->assertInstanceOf(NullCitationEnricher::class, app(EnrichesCitations::class));
         $this->assertInstanceOf(LoggingOperatorNotifier::class, app(NotifiesOperator::class));
-        $this->assertInstanceOf(GeneratesImages::class, app(GeneratesImages::class));
+        // Not `GeneratesImages::class` on both sides — that asserts the
+        // interface against itself and passes for ANY binding, including a
+        // wrong one. `ai.image_provider` defaults to `fal`, so the default
+        // install must get `FalAiService`.
+        $this->assertInstanceOf(FalAiService::class, app(GeneratesImages::class));
         $this->assertInstanceOf(StrSlugGenerator::class, app(GeneratesSlugs::class));
         $this->assertInstanceOf(ContentSimilarityService::class, app(ChecksContentSimilarity::class));
         $this->assertInstanceOf(NullMandatoryWordsProvider::class, app(ProvidesMandatoryWords::class));
