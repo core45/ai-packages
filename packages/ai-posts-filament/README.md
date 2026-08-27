@@ -58,6 +58,115 @@ A `Concerns\HandlesTranslationOnSave` trait a resource's Edit page can use to
 detect missing translations on save and offer an action to dispatch AI
 translation jobs.
 
+## Wiring into a host resource
+
+Three call sites, copy-pasteable into a fresh host's own `PostResource`.
+`AiPostsActions` and `AiCoreActions` cannot inject themselves into a
+host-owned resource — Filament resets `recordActions`/rebuilds the table
+before the resource's own `table()` method runs — so the host must spread
+their factories in explicitly. See the docblocks on
+`Core45\AiPosts\Filament\Actions\AiPostsActions` and
+`Core45\AiCore\Filament\Actions\AiCoreActions` for why.
+
+### 1. Table toolbar bulk actions
+
+`AiPostsActions::forPostsTableToolbar()` must be spread **before**
+`AiCoreActions::forTableToolbar('post')` — the order is deliberate, not
+cosmetic (see `AiPostsActions::forPostsTableToolbar()`'s docblock).
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Resources\Posts\Tables;
+
+use Core45\AiCore\Filament\Actions\AiCoreActions;
+use Core45\AiPosts\Filament\Actions\AiPostsActions;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Tables\Table;
+
+class PostsTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                // ...
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    ...AiPostsActions::forPostsTableToolbar(),
+                    ...AiCoreActions::forTableToolbar('post'),
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+}
+```
+
+`AiCoreActions::forTableToolbar(string $modelKey)` takes the `config('ai.models')`
+key naming the records the table lists (`'post'` here) — it is generic across
+every host model, not blog-specific.
+
+### 2. Edit page header actions
+
+`AiPostsActions::forPostEditHeader()` is deliberately **one** factory, not an
+ai-core spread plus an ai-posts spread, because the actions interleave in a
+specific on-screen order (see its docblock).
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Resources\Posts\Pages;
+
+use App\Filament\Resources\Posts\PostResource;
+use Core45\AiPosts\Filament\Actions\AiPostsActions;
+use Core45\AiPosts\Filament\Concerns\HandlesTranslationOnSave;
+use Filament\Actions\DeleteAction;
+use Filament\Resources\Pages\EditRecord;
+
+class EditPost extends EditRecord
+{
+    use HandlesTranslationOnSave;
+
+    protected static string $resource = PostResource::class;
+
+    protected function afterSave(): void
+    {
+        $this->checkTranslationsAfterSave();
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->translateMissingAction(),
+            ...AiPostsActions::forPostEditHeader(),
+            DeleteAction::make(),
+        ];
+    }
+}
+```
+
+`AiPostsActions::forPostEditHeader()` returns, in on-screen order:
+`ManagePostPipelineAction`, `CheckContentSimilarityAction`,
+`CheckAiDetectionAction::make()`, `CheckAiDetectionAction::makeViewResults()`,
+`EnrichInternalLinksAction`, `RunSeoAnalysisAction`, `ImproveSeoAction`,
+`GeneratePostPhotosAction` — the first and the last two are ai-posts's own;
+the rest come from `ai-core-filament`.
+
+### 3. `HandlesTranslationOnSave` trait
+
+Used above via `use HandlesTranslationOnSave;` on the Edit page. It requires
+nothing beyond the host's `laravellocalization.supportedLocales` config and a
+record from `getRecord()` whose translations respond to `translate($locale)`
+(Astrotomic `Translatable`) — it dispatches `Jobs\TranslatePostToLocale` per
+missing locale and acquires a `Core45\AiCore\Models\TranslationLock` first, so
+a save cannot race a translation already in flight for the same locale.
+
 They appear with no wiring. `AiPostsFilamentServiceProvider` registers
 `AiPostsPlugin` on your panels via `Panel::configureUsing()`.
 
