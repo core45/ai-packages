@@ -6,7 +6,9 @@ exceptions, usage logging, the batch circuit breaker, the model registry, the
 knowledge/learning system, async operation flows (detection + humanization),
 prompt overrides, and the generic content-rewrite base class.
 
-Part of the phaseb AI extraction. As-built reference: `docs/AI_PACKAGES.md`.
+Developed in the `core45/ai-packages` monorepo; this repository is a read-only
+split of it. The monorepo README describes how the packages relate to each
+other.
 
 ## Requirements
 

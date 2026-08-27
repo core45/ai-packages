@@ -9,7 +9,9 @@ Scope is deliberately **customer transport only**. The admin assistant stack
 the feedback-analysis loop) stays in the host application until it gets
 contracts of its own.
 
-Part of the phaseb AI extraction. As-built reference: `docs/AI_PACKAGES.md`.
+Developed in the `core45/ai-packages` monorepo; this repository is a read-only
+split of it. The monorepo README describes how the packages relate to each
+other.
 
 ## Requirements
 
