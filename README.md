@@ -9,6 +9,17 @@ composer require core45/ai-posts
 
 This root package is never published.
 
+> **Picking the work back up?** The project handoff — current state, what is
+> proved end to end versus only container-checked, and what is left — lives at
+> `~/www/phaseb/docs/plans/HANDOFF-ai-packages.md`, alongside the full plan in
+> the same directory. Read it before making changes here.
+>
+> One trap it documents, repeated because it is easy to hit: `~/www/phaseb`
+> consumes these packages through `type: path` repositories pointing at
+> **`phaseb/packages/`**, which is a stale pre-monorepo copy missing recent
+> fixes. This monorepo is the canonical source; edits made in `phaseb/packages/`
+> are lost.
+
 ## The packages
 
 Five **domain** packages. None of them requires Filament, or any admin panel:
