@@ -55,18 +55,16 @@ class ViewBlogPostPipelineRun extends ViewRecord
                     try {
                         app(PipelineOrchestratorService::class)->resume($record);
 
-                        // Honest about the gap: resume() really does un-pause
-                        // the run and point current_step at the next module
-                        // (see PipelineOrchestratorService::resume()), but this
-                        // host ships no module-execution/assembly job to pick
-                        // it up from there, so the run will not advance on its
-                        // own. ->warning() reflects that the state change is
-                        // real but incomplete. Restore ->success() once the
-                        // executor jobs are ported.
+                        // resume() un-pauses the run and either dispatches
+                        // ExecuteModuleJob for the next unexecuted module or,
+                        // if none remain, AssemblePostJob (see
+                        // PipelineOrchestratorService::resume(), lines
+                        // 202-206). Both jobs ship in this monorepo, so the
+                        // run genuinely advances on its own from here.
                         Notification::make()
                             ->title(__('Pipeline un-paused'))
-                            ->body(__('The run has moved past its paused step, but this application has no module-execution job installed, so it will not advance further on its own.'))
-                            ->warning()
+                            ->body(__('The run has moved past its paused step and will continue automatically.'))
+                            ->success()
                             ->send();
                     } catch (\LogicException $e) {
                         Notification::make()
@@ -97,23 +95,20 @@ class ViewBlogPostPipelineRun extends ViewRecord
                 ->icon(Heroicon::OutlinedBolt)
                 ->color('warning')
                 ->requiresConfirmation()
-                ->modalDescription(__('This will mark the run for forced assembly, but this application has no assembly job installed, so the post will not actually be assembled.'))
+                ->modalDescription(__('This will mark the run for forced assembly with whatever modules have completed so far.'))
                 ->visible(fn (BlogPostPipelineRun $record): bool => !$record->status->isTerminal() && $record->status !== BlogPostPipelineStatus::Completed)
                 ->action(function (BlogPostPipelineRun $record): void {
                     app(PipelineOrchestratorService::class)->forceComplete($record);
 
-                    // Honest about the gap: forceComplete() really does write
-                    // the `assembly:forced` step marker (visible on this page
-                    // and in the runs table), but there is no
-                    // AssemblePostJob in this host to dispatch — see
-                    // PipelineOrchestratorService::forceComplete(). ->warning()
-                    // reflects that nothing will actually assemble the post.
-                    // Restore ->success() and this copy once an assembly job
-                    // ships.
+                    // forceComplete() writes the `assembly:forced` step
+                    // marker and dispatches AssemblePostJob (see
+                    // PipelineOrchestratorService::forceComplete(), line
+                    // 226), which ships in this monorepo, so the post will
+                    // actually be assembled from whatever modules completed.
                     Notification::make()
                         ->title(__('Run marked for forced assembly'))
-                        ->body(__('The step has been updated, but no assembly job is installed in this application, so the post will not be assembled.'))
-                        ->warning()
+                        ->body(__('The step has been updated and the post will be assembled from whatever modules have completed so far.'))
+                        ->success()
                         ->send();
                 }),
         ];
